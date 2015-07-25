@@ -167,15 +167,19 @@
             ctx.strokeStyle = "#bbb";
             ctx.lineWidth = 1;
 
+            var halfWidth = canvas.width / 2;
+            var halfHeight = canvas.height / 2;
+            var halfMaxSize = maxSize / 2;
+
             ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 0);
-            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.moveTo(halfWidth, halfHeight - halfMaxSize);
+            ctx.lineTo(halfWidth, halfHeight + halfMaxSize);
             ctx.stroke();
             ctx.closePath();
 
             ctx.beginPath();
-            ctx.moveTo(0, canvas.height / 2);
-            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.moveTo(halfWidth - halfMaxSize, halfHeight);
+            ctx.lineTo(halfWidth + halfMaxSize, halfHeight);
             ctx.stroke();
             ctx.closePath();
         }
