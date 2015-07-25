@@ -111,11 +111,8 @@
             var cell2 = row.insertCell(1);
             var cell3 = row.insertCell(2);
 
-            // Add some text to the new cells:
             cell1.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
-            cell1.addEventListener("keypress", CheckKey);
             cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
-            cell2.addEventListener("keypress", CheckKey);
             cell3.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
             ReDraw();
         }
@@ -124,33 +121,34 @@
         ReBuild();
         var ctx = canvas.getContext("2d");
 
-        var scale;
+        var scale, maxSize;
 
 
         function ReBuild() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            maxSize = canvas.width > canvas.height ? canvas.height : canvas.width;
         }
 
         function ReDraw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.strokeStyle = "#000000";
-            ctx.beginPath();
-            var array = new Array();
-            scale = 0;
+            var array = [];
+            scale = 9999;
 
             for (var i = 1; i < table.rows.length; i++) {
-                var posX = table.rows[i].cells[0].children[0].value;
-                var posY = table.rows[i].cells[1].children[0].value;
+
+                var posX = parseFloat(table.rows[i].cells[0].children[0].value);
+                var posY = parseFloat(table.rows[i].cells[1].children[0].value);
 
                 if (posX != 0) {
-                    scaleX = canvas.width / Math.abs(posX);
-                    if (scaleX > scale) scale = scaleX;
+                    scaleX = maxSize / Math.abs(posX);
+                    if (scaleX < scale) scale = scaleX;
                 }
 
                 if (posY != 0) {
-                    scaleY = canvas.height / Math.abs(posY);
-                    if (scaleY > scale) scale = scaleY;
+                    scaleY = maxSize / Math.abs(posY);
+                    if (scaleY < scale) scale = scaleY;
                 }
 
                 array.push({
@@ -159,41 +157,50 @@
                 });
             }
 
-            DrawLines(array);
+
             DrawBase();
-            ctx.stroke();
+            if (array.length > 1)
+                DrawLines(array);
         }
 
         function DrawBase() {
             ctx.strokeStyle = "#999999";
 
+            ctx.beginPath();
             ctx.moveTo(canvas.width / 2, 0);
             ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+            ctx.closePath();
 
+            ctx.beginPath();
             ctx.moveTo(0, canvas.height / 2);
             ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+            ctx.closePath();
         }
 
         function DrawLines(array) {
-            var halfScale = scale * 0.1;
-            var halfWidth = canvas.width / 2;
-            var halfHeight = canvas.height / 2;
-            for (var i = 0; i < array.length - 1; i++) {
-                var fromX = array[i].x * halfScale + halfWidth;
-                var toX = array[i + 1].x * halfScale + halfWidth;
+            ctx.beginPath();
 
-                var fromY = (-array[i].y * halfScale) + halfHeight;
-                var toY = (-array[i + 1].y * halfScale) + halfHeight;
-
-                console.log("half height " + halfHeight + " half width " + halfWidth)
-                DrawLine(fromX, fromY, toX, toY);
+            ModifyPosition(array[0]);
+            ctx.moveTo(array[0].x, array[0].y);
+            for (var i = 1; i < array.length; i++) {
+                ModifyPosition(array[i]);
+                ctx.lineTo(array[i].x, array[i].y);
             }
+
+
+            ctx.closePath();
+            ctx.stroke();
         }
 
-        function DrawLine(fromX, fromY, toX, toY) {
-            console.log("Drawing line from (" + fromX + "," + fromY + ") to (" + toX + "," + toY + ") scale " + scale);
-            ctx.moveTo(fromX, fromY);
-            ctx.lineTo(toX, toY);
+        function ModifyPosition(position) {
+            var halfScale = scale * 0.48;
+            var halfWidth = canvas.width / 2;
+            var halfHeight = canvas.height / 2;
+
+            position.x = position.x * halfScale + halfWidth;
+            position.y = -position.y * halfScale + halfHeight;
         }
 
         setInterval(ReDraw, 100);
