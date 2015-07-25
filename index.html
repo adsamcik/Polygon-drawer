@@ -164,7 +164,8 @@
         }
 
         function DrawBase() {
-            ctx.strokeStyle = "#999999";
+            ctx.strokeStyle = "#bbb";
+            ctx.lineWidth = 1;
 
             ctx.beginPath();
             ctx.moveTo(canvas.width / 2, 0);
@@ -180,6 +181,9 @@
         }
 
         function DrawLines(array) {
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 2;
+
             ctx.beginPath();
 
             ModifyPosition(array[0]);
