@@ -98,9 +98,9 @@
             }
         }
 
-        function CheckKey() {
+        function CheckKey(event) {
             var key = event.keyCode || event.charCode;
-            return (key >= 48 && key <= 57) || key == 8 || key == 46;
+            return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
         }
 
         function AddPoint() {
@@ -112,9 +112,9 @@
             var cell3 = row.insertCell(2);
 
             // Add some text to the new cells:
-            cell1.innerHTML = "<input type='text' onkeypress='return CheckKey()' value='0'>";
+            cell1.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
             cell1.addEventListener("keypress", CheckKey);
-            cell2.innerHTML = "<input type='text' onkeypress='return CheckKey()' value='0'>";
+            cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
             cell2.addEventListener("keypress", CheckKey);
             cell3.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
             ReDraw();
@@ -124,7 +124,7 @@
         ReBuild();
         var ctx = canvas.getContext("2d");
 
-        var minX, maxX, minY, maxY;
+        var scale;
 
 
         function ReBuild() {
@@ -136,14 +136,30 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.strokeStyle = "#000000";
             ctx.beginPath();
-            for (var i = 1; i < table.rows.length - 1; i++) {
-                DrawLine(
-                    table.rows[i].cells[0].children[0].value,
-                    table.rows[i].cells[1].children[0].value,
-                    table.rows[i + 1].cells[0].children[0].value,
-                    table.rows[i + 1].cells[1].children[0].value
-                );
+            var array = new Array();
+            scale = 0;
+
+            for (var i = 1; i < table.rows.length; i++) {
+                var posX = table.rows[i].cells[0].children[0].value;
+                var posY = table.rows[i].cells[1].children[0].value;
+
+                if (posX != 0) {
+                    scaleX = canvas.width / Math.abs(posX);
+                    if (scaleX > scale) scale = scaleX;
+                }
+
+                if (posY != 0) {
+                    scaleY = canvas.height / Math.abs(posY);
+                    if (scaleY > scale) scale = scaleY;
+                }
+
+                array.push({
+                    x: posX,
+                    y: posY
+                });
             }
+
+            DrawLines(array);
             DrawBase();
             ctx.stroke();
         }
@@ -158,7 +174,24 @@
             ctx.lineTo(canvas.width, canvas.height / 2);
         }
 
+        function DrawLines(array) {
+            var halfScale = scale * 0.1;
+            var halfWidth = canvas.width / 2;
+            var halfHeight = canvas.height / 2;
+            for (var i = 0; i < array.length - 1; i++) {
+                var fromX = array[i].x * halfScale + halfWidth;
+                var toX = array[i + 1].x * halfScale + halfWidth;
+
+                var fromY = (-array[i].y * halfScale) + halfHeight;
+                var toY = (-array[i + 1].y * halfScale) + halfHeight;
+
+                console.log("half height " + halfHeight + " half width " + halfWidth)
+                DrawLine(fromX, fromY, toX, toY);
+            }
+        }
+
         function DrawLine(fromX, fromY, toX, toY) {
+            console.log("Drawing line from (" + fromX + "," + fromY + ") to (" + toX + "," + toY + ") scale " + scale);
             ctx.moveTo(fromX, fromY);
             ctx.lineTo(toX, toY);
         }
