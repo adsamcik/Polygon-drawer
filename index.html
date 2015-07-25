@@ -98,6 +98,11 @@
             }
         }
 
+        function CheckKey() {
+            var key = event.keyCode || event.charCode;
+            return (key >= 48 && key <= 57) || key == 8 || key == 46;
+        }
+
         function AddPoint() {
             var row = table.insertRow();
             row.dataset.id = ++nextIndex;
@@ -107,8 +112,10 @@
             var cell3 = row.insertCell(2);
 
             // Add some text to the new cells:
-            cell1.innerHTML = "<input type='number' value='0'>";
-            cell2.innerHTML = "<input type='number' value='0'>";
+            cell1.innerHTML = "<input type='text' onkeypress='return CheckKey()' value='0'>";
+            cell1.addEventListener("keypress", CheckKey);
+            cell2.innerHTML = "<input type='text' onkeypress='return CheckKey()' value='0'>";
+            cell2.addEventListener("keypress", CheckKey);
             cell3.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
             ReDraw();
         }
@@ -116,10 +123,9 @@
         var canvas = document.getElementById("canvas");
         ReBuild();
         var ctx = canvas.getContext("2d");
-        ReDraw();
-        ReDraw();
 
         var minX, maxX, minY, maxY;
+
 
         function ReBuild() {
             canvas.width = window.innerWidth;
