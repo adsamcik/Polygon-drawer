@@ -5,12 +5,34 @@
    var canvas = document.getElementById("canvas");
    canvas.addEventListener('mousemove', getPosition, false);
 
-   ReBuild();
+   Rebuild();
    var ctx = canvas.getContext("2d");
 
-   var scale, maxSize, mouseX, mouseY;
+   var scale, maxSize, mouseX, mouseY, halfWidth, halfHeigth;
 
-   setInterval(ReDraw, 20);
+   //set for 50fps
+   setInterval(Update, 20);
+
+   function CheckKey(event) {
+       var key = event.keyCode || event.charCode;
+       //allowed keys are 1-9, backspace, delete and -
+       return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
+   };
+
+   function AddPoint() {
+       var row = table.insertRow();
+       row.dataset.id = ++nextIndex;
+
+       //insert cells
+       var cell1 = row.insertCell(0);
+       var cell2 = row.insertCell(1);
+       var cell3 = row.insertCell(2);
+
+       //fill cells
+       cell1.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
+       cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
+       cell3.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
+   };
 
    function RemovePoint(index) {
        for (var i = 0; i < table.rows.length; i++) {
@@ -21,32 +43,15 @@
        }
    };
 
-   function CheckKey(event) {
-       var key = event.keyCode || event.charCode;
-       return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
-   };
-
-   function AddPoint() {
-       var row = table.insertRow();
-       row.dataset.id = ++nextIndex;
-
-       var cell1 = row.insertCell(0);
-       var cell2 = row.insertCell(1);
-       var cell3 = row.insertCell(2);
-
-       cell1.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
-       cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
-       cell3.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
-       ReDraw();
-   };
-
-   function ReBuild() {
+   function Rebuild() {
        canvas.width = window.innerWidth;
        canvas.height = window.innerHeight;
+       halfWidth = canvas.width / 2;
+       halfHeigth = canvas.height / 2;
        maxSize = canvas.width > canvas.height ? canvas.height : canvas.width;
    };
 
-   function ReDraw() {
+   function Update() {
        ctx.clearRect(0, 0, canvas.width, canvas.height);
        ctx.strokeStyle = "#000000";
        var array = [];
@@ -83,12 +88,11 @@
        }
    };
 
+   //Draws the base cross
    function DrawBase() {
        ctx.strokeStyle = "#ccc";
        ctx.lineWidth = 1;
 
-       var halfWidth = canvas.width / 2;
-       var halfHeight = canvas.height / 2;
        var halfMaxSize = maxSize / 2;
 
        ctx.beginPath();
@@ -116,11 +120,9 @@
        }
    };
 
+   //Modifies positions to better fit display
    function ModifyPosition(position) {
        var halfScale = scale * 0.48;
-       var halfWidth = canvas.width / 2;
-       var halfHeight = canvas.height / 2;
-
        return {
            x: position.x * halfScale + halfWidth,
            y: -position.y * halfScale + halfHeight
@@ -128,12 +130,9 @@
    };
 
    function DrawIntersection(array) {
-       var halfWidth = canvas.width / 2;
-       var halfHeight = canvas.height / 2;
+       //prepare variables
        var halfMaxSize = maxSize / 2;
-
        var intersections = [];
-
        var mouseXLine = {
            startX: halfWidth - halfMaxSize,
            endX: halfWidth + halfMaxSize,
@@ -141,6 +140,7 @@
            endY: mouseY
        }
 
+       //Go through every item in array and check if it intersects with mouse line
        for (var i = 0; i < array.length - 1; i++) {
            var line = {
                startX: array[i].x,
@@ -155,7 +155,9 @@
                intersections.push(result);
        }
 
+       //if intersections found, draw
        if (intersections.length > 0) {
+           //draws base line for the intersections
            ctx.beginPath();
            ctx.lineWidth = 2;
            ctx.moveTo(mouseXLine.startX, mouseXLine.startY);
@@ -163,6 +165,7 @@
            ctx.strokeStyle = '#9297B5';
            ctx.stroke();
 
+           //draw every intersection point found
            for (var i = 0; i < intersections.length; i++) {
                ctx.beginPath();
                ctx.arc(intersections[i].x, intersections[i].y, 5, 0, 2 * Math.PI, false);
@@ -204,6 +207,7 @@
        return result;
    };
 
+   //onmove sets mouse position
    function getPosition(event) {
        mouseX = event.pageX;
        mouseY = event.pageY;
