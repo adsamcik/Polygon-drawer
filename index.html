@@ -46,6 +46,9 @@
         html {
             width: 100%;
             height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
         }
         
         .addButton {
@@ -151,18 +154,20 @@
                     if (scaleY < scale) scale = scaleY;
                 }
 
-                array.push({
+                array.push(ModifyPosition({
                     x: posX,
                     y: posY
-                });
+                }));
             }
 
 
             DrawBase();
-            if (array.length > 1)
-                DrawLines(array);
+            if (array.length > 1) {
+                array.push(array[0]);
 
-            DrawIntersection(array);
+                DrawLines(array);
+                DrawIntersection(array);
+            }
         }
 
         function DrawBase() {
@@ -190,18 +195,12 @@
             ctx.strokeStyle = "#000";
             ctx.lineWidth = 2;
 
-            ctx.beginPath();
-
-            ModifyPosition(array[0]);
-            ctx.moveTo(array[0].x, array[0].y);
-            for (var i = 1; i < array.length; i++) {
-                ModifyPosition(array[i]);
-                ctx.lineTo(array[i].x, array[i].y);
+            for (var i = 0; i < array.length - 1; i++) {
+                ctx.beginPath();
+                ctx.moveTo(array[i].x, array[i].y);
+                ctx.lineTo(array[i + 1].x, array[i + 1].y);
+                ctx.stroke();
             }
-
-
-            ctx.closePath();
-            ctx.stroke();
         }
 
         function ModifyPosition(position) {
@@ -209,8 +208,10 @@
             var halfWidth = canvas.width / 2;
             var halfHeight = canvas.height / 2;
 
-            position.x = position.x * halfScale + halfWidth;
-            position.y = -position.y * halfScale + halfHeight;
+            return {
+                x: position.x * halfScale + halfWidth,
+                y: -position.y * halfScale + halfHeight
+            };
         }
 
         var mouseX, mouseY;
@@ -243,15 +244,23 @@
                     intersections.push(result);
             }
 
-            for (var i = 0; i < intersections.length; i++) {
+            if (intersections.length > 0) {
                 ctx.beginPath();
-                ctx.arc(intersections[i].x, intersections[i].y, 20, 0, 2 * Math.PI, false);
-                console.log(intersections[i]);
-                ctx.fillStyle = 'green';
-                ctx.fill();
-                ctx.lineWidth = 5;
-                ctx.strokeStyle = '#003300';
+                ctx.lineWidth = 2;
+                ctx.moveTo(mouseXLine.startX, mouseXLine.startY);
+                ctx.lineTo(mouseXLine.endX, mouseXLine.endY);
+                ctx.strokeStyle = '#dddddd';
                 ctx.stroke();
+
+                for (var i = 0; i < intersections.length; i++) {
+                    ctx.beginPath();
+                    ctx.arc(intersections[i].x, intersections[i].y, 5, 0, 2 * Math.PI, false);
+                    ctx.fillStyle = '#3F51B5';
+                    ctx.fill();
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = '#dddddd';
+                    ctx.stroke();
+                }
             }
         }
 
@@ -293,7 +302,6 @@
 
             //mouseX -= canvas.offsetLeft;
             //mouseY -= canvas.offsetTop;
-            console.log(mouseX);
         }
 
         setInterval(ReDraw, 20);
