@@ -171,7 +171,7 @@
         }
 
         function DrawBase() {
-            ctx.strokeStyle = "#bbb";
+            ctx.strokeStyle = "#ccc";
             ctx.lineWidth = 1;
 
             var halfWidth = canvas.width / 2;
@@ -249,7 +249,7 @@
                 ctx.lineWidth = 2;
                 ctx.moveTo(mouseXLine.startX, mouseXLine.startY);
                 ctx.lineTo(mouseXLine.endX, mouseXLine.endY);
-                ctx.strokeStyle = '#dddddd';
+                ctx.strokeStyle = '#9297B5';
                 ctx.stroke();
 
                 for (var i = 0; i < intersections.length; i++) {
@@ -258,7 +258,6 @@
                     ctx.fillStyle = '#3F51B5';
                     ctx.fill();
                     ctx.lineWidth = 3;
-                    ctx.strokeStyle = '#dddddd';
                     ctx.stroke();
                 }
             }
