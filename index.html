@@ -161,6 +161,8 @@
             DrawBase();
             if (array.length > 1)
                 DrawLines(array);
+
+            DrawIntersection(array);
         }
 
         function DrawBase() {
@@ -211,7 +213,90 @@
             position.y = -position.y * halfScale + halfHeight;
         }
 
-        setInterval(ReDraw, 100);
+        var mouseX, mouseY;
+
+        function DrawIntersection(array) {
+            var halfWidth = canvas.width / 2;
+            var halfHeight = canvas.height / 2;
+            var halfMaxSize = maxSize / 2;
+
+            var intersections = [];
+
+            var mouseXLine = {
+                startX: halfWidth - halfMaxSize,
+                endX: halfWidth + halfMaxSize,
+                startY: mouseY,
+                endY: mouseY
+            }
+
+            for (var i = 0; i < array.length - 1; i++) {
+                var line = {
+                    startX: array[i].x,
+                    startY: array[i].y,
+                    endX: array[i + 1].x,
+                    endY: array[i + 1].y
+                }
+
+                var result = CheckLineIntersection(mouseXLine, line);
+
+                if (result.intersects)
+                    intersections.push(result);
+            }
+
+            for (var i = 0; i < intersections.length; i++) {
+                ctx.beginPath();
+                ctx.arc(intersections[i].x, intersections[i].y, 20, 0, 2 * Math.PI, false);
+                console.log(intersections[i]);
+                ctx.fillStyle = 'green';
+                ctx.fill();
+                ctx.lineWidth = 5;
+                ctx.strokeStyle = '#003300';
+                ctx.stroke();
+            }
+        }
+
+        function CheckLineIntersection(line1, line2) {
+            // if the lines intersect, the result contains the x and y of the intersection (treating the lines as infinite) and booleans for whether line segment 1 or line segment 2 contain the point
+            var denominator, a, b, numerator1, numerator2, result = {
+                x: null,
+                y: null,
+                intersects: false
+            };
+            denominator = ((line2.endY - line2.startY) * (line1.endX - line1.startX)) - ((line2.endX - line2.startX) * (line1.endY - line1.startY));
+            if (denominator == 0) {
+                return result;
+            }
+            a = line1.startY - line2.startY;
+            b = line1.startX - line2.startX;
+            numerator1 = ((line2.endX - line2.startX) * a) - ((line2.endY - line2.startY) * b);
+            numerator2 = ((line1.endX - line1.startX) * a) - ((line1.endY - line1.startY) * b);
+            a = numerator1 / denominator;
+            b = numerator2 / denominator;
+
+            // if we cast these lines infinitely in both directions, they intersect here:
+            result.x = line1.startX + (a * (line1.endX - line1.startX));
+            result.y = line1.startY + (a * (line1.endY - line1.startY));
+
+            // if line2 is a segment and line1 is infinite, they intersect if:
+            if (b > 0 && b < 1 && a > 0 && a < 1) {
+                result.intersects = true;
+            }
+            // if line1 and line2 are segments, they intersect if both of the above are true
+            return result;
+        };
+
+        canvas.addEventListener('mousemove', getPosition, false);
+
+        function getPosition(event) {
+            mouseX = event.pageX;
+            mouseY = event.pageY;
+
+            //mouseX -= canvas.offsetLeft;
+            //mouseY -= canvas.offsetTop;
+            console.log(mouseX);
+        }
+
+        setInterval(ReDraw, 50);
     </script>
 </body>
 
