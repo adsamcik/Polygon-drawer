@@ -1,6 +1,17 @@
    var table = document.getElementById("table");
    var nextIndex = 0;
 
+   //canvas setup
+   var canvas = document.getElementById("canvas");
+   canvas.addEventListener('mousemove', getPosition, false);
+
+   ReBuild();
+   var ctx = canvas.getContext("2d");
+
+   var scale, maxSize, mouseX, mouseY;
+
+   setInterval(ReDraw, 20);
+
    function RemovePoint(index) {
        for (var i = 0; i < table.rows.length; i++) {
            if (table.rows[i].dataset.id == index) {
@@ -8,12 +19,12 @@
                break;
            }
        }
-   }
+   };
 
    function CheckKey(event) {
        var key = event.keyCode || event.charCode;
        return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
-   }
+   };
 
    function AddPoint() {
        var row = table.insertRow();
@@ -27,20 +38,13 @@
        cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
        cell3.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
        ReDraw();
-   }
-
-   var canvas = document.getElementById("canvas");
-   ReBuild();
-   var ctx = canvas.getContext("2d");
-
-   var scale, maxSize;
-
+   };
 
    function ReBuild() {
        canvas.width = window.innerWidth;
        canvas.height = window.innerHeight;
        maxSize = canvas.width > canvas.height ? canvas.height : canvas.width;
-   }
+   };
 
    function ReDraw() {
        ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -77,7 +81,7 @@
            DrawLines(array);
            DrawIntersection(array);
        }
-   }
+   };
 
    function DrawBase() {
        ctx.strokeStyle = "#ccc";
@@ -98,7 +102,7 @@
        ctx.lineTo(halfWidth + halfMaxSize, halfHeight);
        ctx.stroke();
        ctx.closePath();
-   }
+   };
 
    function DrawLines(array) {
        ctx.strokeStyle = "#000";
@@ -110,7 +114,7 @@
            ctx.lineTo(array[i + 1].x, array[i + 1].y);
            ctx.stroke();
        }
-   }
+   };
 
    function ModifyPosition(position) {
        var halfScale = scale * 0.48;
@@ -121,9 +125,7 @@
            x: position.x * halfScale + halfWidth,
            y: -position.y * halfScale + halfHeight
        };
-   }
-
-   var mouseX, mouseY;
+   };
 
    function DrawIntersection(array) {
        var halfWidth = canvas.width / 2;
@@ -170,7 +172,7 @@
                ctx.stroke();
            }
        }
-   }
+   };
 
    function CheckLineIntersection(line1, line2) {
        // if the lines intersect, the result contains the x and y of the intersection (treating the lines as infinite) and booleans for whether line segment 1 or line segment 2 contain the point
@@ -202,14 +204,7 @@
        return result;
    };
 
-   canvas.addEventListener('mousemove', getPosition, false);
-
    function getPosition(event) {
        mouseX = event.pageX;
        mouseY = event.pageY;
-
-       //mouseX -= canvas.offsetLeft;
-       //mouseY -= canvas.offsetTop;
-   }
-
-   setInterval(ReDraw, 20);
+   };
