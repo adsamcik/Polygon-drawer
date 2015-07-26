@@ -8,7 +8,7 @@
    Rebuild();
    var ctx = canvas.getContext("2d");
 
-   var scale, maxSize, mouseX, mouseY, halfWidth, halfHeigth;
+   var scale, maxSize, mouseX, mouseY, halfWidth, halfHeight;
 
    //set for 50fps
    setInterval(Update, 20);
@@ -47,7 +47,7 @@
        canvas.width = window.innerWidth;
        canvas.height = window.innerHeight;
        halfWidth = canvas.width / 2;
-       halfHeigth = canvas.height / 2;
+       halfHeight = canvas.height / 2;
        maxSize = canvas.width > canvas.height ? canvas.height : canvas.width;
    };
 
