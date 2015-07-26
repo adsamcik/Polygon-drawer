@@ -9,6 +9,7 @@
    var ctx = canvas.getContext("2d");
 
    var scale, maxSize, mouseX, mouseY, halfWidth, halfHeight;
+   var horizontalIntersect = true;
 
    //set for 50fps
    setInterval(Update, 20);
@@ -133,11 +134,20 @@
        //prepare variables
        var halfMaxSize = maxSize / 2;
        var intersections = [];
-       var mouseXLine = {
-           startX: halfWidth - halfMaxSize,
-           endX: halfWidth + halfMaxSize,
-           startY: mouseY,
-           endY: mouseY
+       if (horizontalIntersect)
+           var mouseLine = {
+               startX: halfWidth - halfMaxSize,
+               endX: halfWidth + halfMaxSize,
+               startY: mouseY,
+               endY: mouseY
+           };
+       else {
+           var mouseLine = {
+               startX: mouseX,
+               endX: mouseX,
+               startY: halfHeight - halfMaxSize,
+               endY: halfHeight + halfMaxSize
+           }
        }
 
        //Go through every item in array and check if it intersects with mouse line
@@ -149,7 +159,7 @@
                endY: array[i + 1].y
            }
 
-           var result = CheckLineIntersection(mouseXLine, line);
+           var result = CheckLineIntersection(mouseLine, line);
 
            if (result.intersects)
                intersections.push(result);
@@ -161,8 +171,8 @@
            ctx.beginPath();
            ctx.lineWidth = 2;
            ctx.setLineDash([10]);
-           ctx.moveTo(mouseXLine.startX, mouseXLine.startY);
-           ctx.lineTo(mouseXLine.endX, mouseXLine.endY);
+           ctx.moveTo(mouseLine.startX, mouseLine.startY);
+           ctx.lineTo(mouseLine.endX, mouseLine.endY);
            ctx.strokeStyle = '#9297B5';
            ctx.stroke();
            ctx.setLineDash([0]);
