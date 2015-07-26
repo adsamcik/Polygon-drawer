@@ -160,10 +160,12 @@
            //draws base line for the intersections
            ctx.beginPath();
            ctx.lineWidth = 2;
+           ctx.setLineDash([10]);
            ctx.moveTo(mouseXLine.startX, mouseXLine.startY);
            ctx.lineTo(mouseXLine.endX, mouseXLine.endY);
            ctx.strokeStyle = '#9297B5';
            ctx.stroke();
+           ctx.setLineDash([0]);
 
            //draw every intersection point found
            for (var i = 0; i < intersections.length; i++) {
