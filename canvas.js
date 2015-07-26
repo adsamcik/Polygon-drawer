@@ -9,7 +9,8 @@
    Rebuild();
    var ctx = canvas.getContext("2d");
 
-   var scale, maxSize, halfMaxSize, mouseX, mouseY, halfWidth, halfHeight;
+   var mouse = {};
+   var scale, maxSize, halfMaxSize, halfWidth, halfHeight;
    var horizontalIntersect = true;
    var enableMouseLine = true;
    var hideIntersections = false;
@@ -17,7 +18,7 @@
    var savedILines = [];
 
    //set for 50fps
-   setInterval(Update, 20);
+   var updateInt = setInterval(Update, 20);
 
    function CheckKey(event) {
        var key = event.keyCode || event.charCode;
@@ -85,7 +86,6 @@
            }));
        }
 
-
        DrawBase();
        if (array.length > 1) {
            array.push(array[0]);
@@ -131,6 +131,8 @@
    function ModifyPosition(position) {
        var halfScale = scale * 0.48;
        return {
+           origX: position.x,
+           origY: position.y,
            x: position.x * halfScale + halfWidth,
            y: -position.y * halfScale + halfHeight
        };
@@ -138,21 +140,19 @@
 
    function DrawIntersections(array) {
        for (var i = 0; i < savedILines.length; i++)
-           DrawIntersection(savedILines[i], array);
+           DrawIntersection(savedILines[i], array, true);
 
        if (enableMouseLine)
-           DrawIntersection(GetMouseLine(), array);
+           DrawIntersection(GetMouseLine(), array, false);
    }
 
-   function DrawIntersection(iLine, array) {
+   function DrawIntersection(iLine, array, enableMouseInteraction) {
        var intersections = [];
        //Go through every item in array and check if it intersects with mouse line
        for (var i = 0; i < array.length - 1; i++) {
            var line = {
-               startX: array[i].x,
-               startY: array[i].y,
-               endX: array[i + 1].x,
-               endY: array[i + 1].y
+               start: array[i],
+               end: array[i + 1]
            }
 
            var result = CheckLineIntersection(iLine, line);
@@ -167,18 +167,24 @@
            ctx.beginPath();
            ctx.lineWidth = 2;
            ctx.setLineDash([10]);
-           ctx.moveTo(iLine.startX, iLine.startY);
-           ctx.lineTo(iLine.endX, iLine.endY);
+           ctx.moveTo(iLine.start.x, iLine.start.y);
+           ctx.lineTo(iLine.end.x, iLine.end.y);
+           ctx.closePath();
            ctx.strokeStyle = '#9297B5';
            ctx.stroke();
            ctx.setLineDash([0]);
-
            //draw every intersection point found
            for (var i = 0; i < intersections.length; i++) {
+               if (enableMouseInteraction)
+                   var mouseInRange = IsMouseInRange(intersections[i], 10);
+               else
+                   var mouseInRange = false;
+
+               var radius = mouseInRange ? 10 : 5;
+               if (mouseInRange) DrawCoords(intersections[i]);
                ctx.beginPath();
-               console.log("ran");
-               var radius = IsMouseInRange(intersections[i], 20) ? 10 : 5;
                ctx.arc(intersections[i].x, intersections[i].y, radius, 0, 2 * Math.PI, false);
+               ctx.closePath();
                ctx.fillStyle = '#3F51B5';
                ctx.fill();
                ctx.lineWidth = 3;
@@ -189,30 +195,37 @@
 
    function IsMouseInRange(pos, radius) {
        var distanceVector = {
-           x: Math.abs(mouseX - pos.x),
-           y: Math.abs(mouseY - pos.y)
+           x: Math.abs(mouse.x - pos.x),
+           y: Math.abs(mouse.y - pos.y)
        };
        var distanceSqrd = distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
-       console.log(distanceSqrd);
        return distanceSqrd < radius * radius;
-   }
+   };
 
    function GetMouseLine() {
        if (horizontalIntersect)
            return {
-               startX: halfWidth - halfMaxSize,
-               endX: halfWidth + halfMaxSize,
-               startY: mouseY,
-               endY: mouseY
+               start: {
+                   x: halfWidth - halfMaxSize,
+                   y: mouse.y
+               },
+               end: {
+                   x: halfWidth + halfMaxSize,
+                   y: mouse.y
+               }
            };
        else
            return {
-               startX: mouseX,
-               endX: mouseX,
-               startY: halfHeight - halfMaxSize,
-               endY: halfHeight + halfMaxSize
+               start: {
+                   x: mouse.x,
+                   y: halfHeight - halfMaxSize
+               },
+               end: {
+                   x: mouse.x,
+                   y: halfHeight + halfMaxSize
+               }
            };
-   }
+   };
 
    function CheckLineIntersection(line1, line2) {
        // if the lines intersect, the result contains the x and y of the intersection (treating the lines as infinite) and booleans for whether line segment 1 or line segment 2 contain the point
@@ -221,33 +234,74 @@
            y: null,
            intersects: false
        };
-       denominator = ((line2.endY - line2.startY) * (line1.endX - line1.startX)) - ((line2.endX - line2.startX) * (line1.endY - line1.startY));
+       denominator = ((line2.end.y - line2.start.y) * (line1.end.x - line1.start.x)) - ((line2.end.x - line2.start.x) * (line1.end.y - line1.start.y));
+
        if (denominator == 0) {
            return result;
        }
-       a = line1.startY - line2.startY;
-       b = line1.startX - line2.startX;
-       numerator1 = ((line2.endX - line2.startX) * a) - ((line2.endY - line2.startY) * b);
-       numerator2 = ((line1.endX - line1.startX) * a) - ((line1.endY - line1.startY) * b);
+
+       a = line1.start.y - line2.start.y;
+       b = line1.start.x - line2.start.x;
+       numerator1 = ((line2.end.x - line2.start.x) * a) - ((line2.end.y - line2.start.y) * b);
+       numerator2 = ((line1.end.x - line1.start.x) * a) - ((line1.end.y - line1.start.y) * b);
        a = numerator1 / denominator;
        b = numerator2 / denominator;
 
-       // if we cast these lines infinitely in both directions, they intersect here:
-       result.x = line1.startX + (a * (line1.endX - line1.startX));
-       result.y = line1.startY + (a * (line1.endY - line1.startY));
-
-       // if line2 is a segment and line1 is infinite, they intersect if:
        if (b > 0 && b < 1 && a > 0 && a < 1) {
            result.intersects = true;
+           result.x = line1.start.x + (a * (line1.end.x - line1.start.x));
+           result.y = line1.start.y + (a * (line1.end.y - line1.start.y));
+
+           var maxVal = maxSize / scale;
+           result.origX = (result.x - halfWidth) / scale * 2;
+           result.origY = (result.y - halfHeight) / scale * 2;
        }
-       // if line1 and line2 are segments, they intersect if both of the above are true
+
        return result;
    };
 
+   function DrawCoords(pos) {
+       ctx.globalAlpha = 0.9;
+       ctx.fillStyle = '#757575';
+       DrawRoundedRect(pos.x - 40, pos.y + 15, 80, 40, 10, true, false);
+       ctx.globalAlpha = 1;
+       ctx.fillStyle = '#ffffff';
+
+       ctx.font = "12px Roboto";
+       ctx.fillText("x: " + pos.origX.toPrecision(3), pos.x - 35, pos.y + 30);
+       ctx.fillText("y: " + pos.origY.toPrecision(3), pos.x - 35, pos.y + 45);
+   };
+
+   function DrawRoundedRect(x, y, width, height, radius, fill, stroke) {
+       if (typeof stroke == "undefined") {
+           stroke = true;
+       }
+       if (typeof radius === "undefined") {
+           radius = 5;
+       }
+       ctx.beginPath();
+       ctx.moveTo(x + radius, y);
+       ctx.lineTo(x + width - radius, y);
+       ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+       ctx.lineTo(x + width, y + height - radius);
+       ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+       ctx.lineTo(x + radius, y + height);
+       ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+       ctx.lineTo(x, y + radius);
+       ctx.quadraticCurveTo(x, y, x + radius, y);
+       ctx.closePath();
+       if (stroke) {
+           ctx.stroke();
+       }
+       if (fill) {
+           ctx.fill();
+       }
+   }
+
    //onmove sets mouse position
    function SetMousePosition(event) {
-       mouseX = event.pageX;
-       mouseY = event.pageY;
+       mouse.x = event.pageX;
+       mouse.y = event.pageY;
    };
 
    function SaveIntersection() {
