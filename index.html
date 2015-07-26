@@ -3,27 +3,39 @@
 
 <head>
     <title>Polygon project</title>
-    <link rel="stylesheet" href="/bower_components/material-design-lite/material.min.css">
+    <link rel="stylesheet" href="bower_components/material-design-lite/material.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
     <link rel="stylesheet" href="main.css">
 </head>
 
 <body onresize="ReBuild()">
-    <canvas id="canvas">
-    </canvas>
+    <canvas id="canvas"></canvas>
     <div id="positionWrapper" class="mdl-shadow--2dp">
         <table id="table">
             <thead>
                 <tr>
-                    <th class="mdl-data-table__cell--non-numeric">Position X</th>
-                    <th class="mdl-data-table__cell--non-numeric">Position Y</th>
-                    <th></th>
+                    <th class="mdl-data-table__cell--non-numeric" style="width:120px">Position X</th>
+                    <th class="mdl-data-table__cell--non-numeric" style="width:120px">Position Y</th>
+                    <th>
+                        <!-- Right aligned menu below button -->
+                        <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
+                            <i class="material-icons">more_vert</i>
+                        </button>
+
+                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
+                            <li class="mdl-menu__item">Some Action</li>
+                            <li class="mdl-menu__item">Another Action</li>
+                            <li disabled class="mdl-menu__item">Disabled Action</li>
+                            <li class="mdl-menu__item">Yet Another Action</li>
+                        </ul>
+                    </th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
+
         <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored addButton" onclick="AddPoint()">
             <i class="material-icons">add</i>
         </button>

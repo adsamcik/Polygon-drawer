@@ -8,6 +8,7 @@
             border-bottom: 2px solid rgba(0, 0, 0, 0.12);
             color: rgba(0, 0, 0, 0.5);
             font-weight: bold;
+            text-align: center;
         }
         
         input:focus {
@@ -53,4 +54,5 @@
         
         #table th {
             font-weight: bold;
+            padding: 10px;
         }
