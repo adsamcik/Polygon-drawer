@@ -3,13 +3,16 @@
 
    //canvas setup
    var canvas = document.getElementById("canvas");
-   canvas.addEventListener('mousemove', getPosition, false);
+   canvas.addEventListener('mousemove', SetMousePosition, false);
+   canvas.addEventListener('mousedown', SaveIntersection, false);
 
    Rebuild();
    var ctx = canvas.getContext("2d");
 
-   var scale, maxSize, mouseX, mouseY, halfWidth, halfHeight;
+   var scale, maxSize, halfMaxSize, mouseX, mouseY, halfWidth, halfHeight;
    var horizontalIntersect = true;
+
+   var savedILines = [];
 
    //set for 50fps
    setInterval(Update, 20);
@@ -50,6 +53,8 @@
        halfWidth = canvas.width / 2;
        halfHeight = canvas.height / 2;
        maxSize = canvas.width > canvas.height ? canvas.height : canvas.width;
+       halfMaxSize = maxSize / 2;
+
    };
 
    function Update() {
@@ -59,7 +64,6 @@
        scale = 9999;
 
        for (var i = 1; i < table.rows.length; i++) {
-
            var posX = parseFloat(table.rows[i].cells[0].children[0].value);
            var posY = parseFloat(table.rows[i].cells[1].children[0].value);
 
@@ -85,7 +89,7 @@
            array.push(array[0]);
 
            DrawLines(array);
-           DrawIntersection(array);
+           DrawIntersections(array);
        }
    };
 
@@ -93,8 +97,6 @@
    function DrawBase() {
        ctx.strokeStyle = "#ccc";
        ctx.lineWidth = 1;
-
-       var halfMaxSize = maxSize / 2;
 
        ctx.beginPath();
        ctx.moveTo(halfWidth, halfHeight - halfMaxSize);
@@ -130,26 +132,14 @@
        };
    };
 
-   function DrawIntersection(array) {
-       //prepare variables
-       var halfMaxSize = maxSize / 2;
-       var intersections = [];
-       if (horizontalIntersect)
-           var mouseLine = {
-               startX: halfWidth - halfMaxSize,
-               endX: halfWidth + halfMaxSize,
-               startY: mouseY,
-               endY: mouseY
-           };
-       else {
-           var mouseLine = {
-               startX: mouseX,
-               endX: mouseX,
-               startY: halfHeight - halfMaxSize,
-               endY: halfHeight + halfMaxSize
-           }
-       }
+   function DrawIntersections(array) {
+       for (var i = 0; i < savedILines.length; i++)
+           DrawIntersection(savedILines[i], array);
+       DrawIntersection(GetMouseLine(), array);
+   }
 
+   function DrawIntersection(iLine, array) {
+       var intersections = [];
        //Go through every item in array and check if it intersects with mouse line
        for (var i = 0; i < array.length - 1; i++) {
            var line = {
@@ -159,7 +149,7 @@
                endY: array[i + 1].y
            }
 
-           var result = CheckLineIntersection(mouseLine, line);
+           var result = CheckLineIntersection(iLine, line);
 
            if (result.intersects)
                intersections.push(result);
@@ -171,8 +161,8 @@
            ctx.beginPath();
            ctx.lineWidth = 2;
            ctx.setLineDash([10]);
-           ctx.moveTo(mouseLine.startX, mouseLine.startY);
-           ctx.lineTo(mouseLine.endX, mouseLine.endY);
+           ctx.moveTo(iLine.startX, iLine.startY);
+           ctx.lineTo(iLine.endX, iLine.endY);
            ctx.strokeStyle = '#9297B5';
            ctx.stroke();
            ctx.setLineDash([0]);
@@ -188,6 +178,27 @@
            }
        }
    };
+
+   function IsMouseInRange(pos, radius) {
+
+   }
+
+   function GetMouseLine() {
+       if (horizontalIntersect)
+           return {
+               startX: halfWidth - halfMaxSize,
+               endX: halfWidth + halfMaxSize,
+               startY: mouseY,
+               endY: mouseY
+           };
+       else
+           return {
+               startX: mouseX,
+               endX: mouseX,
+               startY: halfHeight - halfMaxSize,
+               endY: halfHeight + halfMaxSize
+           };
+   }
 
    function CheckLineIntersection(line1, line2) {
        // if the lines intersect, the result contains the x and y of the intersection (treating the lines as infinite) and booleans for whether line segment 1 or line segment 2 contain the point
@@ -220,7 +231,11 @@
    };
 
    //onmove sets mouse position
-   function getPosition(event) {
+   function SetMousePosition(event) {
        mouseX = event.pageX;
        mouseY = event.pageY;
    };
+
+   function SaveIntersection() {
+       savedILines.push(GetMouseLine());
+   }
