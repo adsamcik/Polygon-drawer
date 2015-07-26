@@ -14,6 +14,7 @@
    var horizontalIntersect = true;
    var enableMouseLine = true;
    var hideIntersections = false;
+   var scaler = 0.48;
 
    var savedILines = [];
 
@@ -129,7 +130,7 @@
 
    //Modifies positions to better fit display
    function ModifyPosition(position) {
-       var halfScale = scale * 0.48;
+       var halfScale = scale * scaler;
        return {
            origX: position.x,
            origY: position.y,
@@ -252,9 +253,9 @@
            result.x = line1.start.x + (a * (line1.end.x - line1.start.x));
            result.y = line1.start.y + (a * (line1.end.y - line1.start.y));
 
-           var maxVal = maxSize / scale;
-           result.origX = (result.x - halfWidth) / scale * 2;
-           result.origY = (result.y - halfHeight) / scale * 2;
+           var scaleFix = (scale * scaler * 2);
+           result.origX = (result.x - halfWidth) / scaleFix * 2;
+           result.origY = (result.y - halfHeight) / scaleFix * 2;
        }
 
        return result;
@@ -307,4 +308,8 @@
    function SaveIntersection() {
        if (enableMouseLine)
            savedILines.push(GetMouseLine());
+   }
+
+   function ClearAll() {
+       savedILines = [];
    }
