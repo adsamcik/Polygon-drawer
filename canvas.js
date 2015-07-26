@@ -11,6 +11,8 @@
 
    var scale, maxSize, halfMaxSize, mouseX, mouseY, halfWidth, halfHeight;
    var horizontalIntersect = true;
+   var enableMouseLine = true;
+   var hideIntersections = false;
 
    var savedILines = [];
 
@@ -89,7 +91,9 @@
            array.push(array[0]);
 
            DrawLines(array);
-           DrawIntersections(array);
+
+           if (!hideIntersections)
+               DrawIntersections(array);
        }
    };
 
@@ -135,7 +139,9 @@
    function DrawIntersections(array) {
        for (var i = 0; i < savedILines.length; i++)
            DrawIntersection(savedILines[i], array);
-       DrawIntersection(GetMouseLine(), array);
+
+       if (enableMouseLine)
+           DrawIntersection(GetMouseLine(), array);
    }
 
    function DrawIntersection(iLine, array) {
@@ -170,7 +176,9 @@
            //draw every intersection point found
            for (var i = 0; i < intersections.length; i++) {
                ctx.beginPath();
-               ctx.arc(intersections[i].x, intersections[i].y, 5, 0, 2 * Math.PI, false);
+               console.log("ran");
+               var radius = IsMouseInRange(intersections[i], 20) ? 10 : 5;
+               ctx.arc(intersections[i].x, intersections[i].y, radius, 0, 2 * Math.PI, false);
                ctx.fillStyle = '#3F51B5';
                ctx.fill();
                ctx.lineWidth = 3;
@@ -180,7 +188,13 @@
    };
 
    function IsMouseInRange(pos, radius) {
-
+       var distanceVector = {
+           x: Math.abs(mouseX - pos.x),
+           y: Math.abs(mouseY - pos.y)
+       };
+       var distanceSqrd = distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
+       console.log(distanceSqrd);
+       return distanceSqrd < radius * radius;
    }
 
    function GetMouseLine() {
@@ -237,5 +251,6 @@
    };
 
    function SaveIntersection() {
-       savedILines.push(GetMouseLine());
+       if (enableMouseLine)
+           savedILines.push(GetMouseLine());
    }
