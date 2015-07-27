@@ -14,36 +14,44 @@
 <body onresize="Rebuild()">
 
     <canvas id="canvas"></canvas>
-    <div id="positionWrapper" class="mdl-shadow--2dp">
-        <table id="table">
-            <thead>
-                <tr>
-                    <th class="mdl-data-table__cell--non-numeric" style="width:120px">Position X</th>
-                    <th class="mdl-data-table__cell--non-numeric" style="width:120px">Position Y</th>
-                    <th>
-                        <!-- Right aligned menu below button -->
-                        <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
-                            <i class="material-icons">more_vert</i>
-                        </button>
 
-                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
-                            <li class="mdl-menu__item" onclick="(function(e){ horizontalIntersect = !horizontalIntersect; })(event)">Change intersection axis</li>
-                            <li class="mdl-menu__item" onclick="(function(e){ enableMouseLine = !enableMouseLine; })(event)">Toggle mouse line</li>
-                            <li class="mdl-menu__item" onclick="(function(e){ hideIntersections = !hideIntersections; })(event)">Toggle intersections</li>
-                            <li class="mdl-menu__item" onclick="ClearAll()">Clear all</li>
-                        </ul>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+    <table id="table" class="mdl-shadow--2dp">
+        <thead>
+            <tr>
+                <th></th>
+                <th class="mdl-data-table__cell--non-numeric coordInput">Position X</th>
+                <th class="mdl-data-table__cell--non-numeric coordInput">Position Y</th>
+                <th>
+                    <!-- Right aligned menu below button -->
+                    <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
+                        <i class="material-icons">more_vert</i>
+                    </button>
 
+                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
+                        <li class="mdl-menu__item" onclick="(function(e){ horizontalIntersect = !horizontalIntersect; })(event)">Change intersection axis</li>
+                        <li class="mdl-menu__item" onclick="(function(e){ enableMouseLine = !enableMouseLine; })(event)">Toggle mouse line</li>
+                        <li class="mdl-menu__item" onclick="(function(e){ hideIntersections = !hideIntersections; })(event)">Toggle intersections</li>
+                        <li class="mdl-menu__item" onclick="ClearAll()">Clear all</li>
+                    </ul>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div id="newPointWrapper" class="mdl-shadow--2dp">
+        <div class="mdl-tabs__tab-bar" id="input-type-select">
+            <span class="mdl-tabs__tab clickable" onclick="SetInputType(this)">point</span>
+            <span class="mdl-tabs__tab clickable" onclick="SetInputType(this)">vector</span>
+        </div>
+        <div style="padding: 10px; text-align: center;">
+            <input type='text' onkeypress='return CheckKey(event)' placeholder="X" class="coordInput inline">
+            <input type='text' onkeypress='return CheckKey(event)' placeholder="Y" class="coordInput inline">
+        </div>
         <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored addButton" onclick="AddPoint()">
             <i class="material-icons">add</i>
         </button>
-    </div>
-    <script src="canvas.js"></script>
+        <script src="canvas.js"></script>
 </body>
 
 </html>

@@ -17,19 +17,22 @@
             border-bottom-color: #3F51B5;
         }
         
-        #positionWrapper {
+        #newPointWrapper {
             position: fixed;
-            top: 3%;
-            left: 3%;
+            bottom: 30px;
+            right: 3%;
             padding-bottom: 20px;
-            width: 300px;
+            width: 240px;
             border: 0;
             background: rgba(255, 255, 255, 0.9);
         }
         
         #table {
-            margin-bottom: 10px;
-            width: 300px;
+            position: fixed;
+            top: 3%;
+            left: 3%;
+            width: 240px;
+            max-height: 50%;
         }
         
         #canvas,
@@ -55,4 +58,22 @@
         #table th {
             font-weight: bold;
             padding: 10px;
+        }
+        
+        .inline {
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .coordInput {
+            width: 80px;
+        }
+        
+        .is-active {
+            box-sizing: border-box;
+            border-bottom: 4px #3F51B5 solid;
+        }
+        
+        .clickable {
+            cursor: pointer;
         }

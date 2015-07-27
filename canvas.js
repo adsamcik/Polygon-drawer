@@ -21,6 +21,10 @@
    //set for 50fps
    var updateInt = setInterval(Update, 20);
 
+   var selectedTab;
+   var inputType;
+   SetInputType(document.getElementById('input-type-select').children[0]);
+
    function CheckKey(event) {
        var key = event.keyCode || event.charCode;
        //allowed keys are 1-9, backspace, delete and -
@@ -35,11 +39,13 @@
        var cell1 = row.insertCell(0);
        var cell2 = row.insertCell(1);
        var cell3 = row.insertCell(2);
+       var cell4 = row.insertCell(3);
 
        //fill cells
-       cell1.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
+       cell1.innerHTML = inputType;
        cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
-       cell3.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
+       cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
+       cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
    };
 
    function RemovePoint(index) {
@@ -314,4 +320,13 @@
 
    function ClearAll() {
        savedILines = [];
+   }
+
+   function SetInputType(elem) {
+       inputType = elem.innerHTML;
+       if (selectedTab != null)
+           selectedTab.className = selectedTab.className.replace(' is-active', '').trim();
+
+       selectedTab = elem;
+       elem.className += ' is-active';
    }
