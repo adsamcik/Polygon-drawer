@@ -42,7 +42,7 @@
        var cell4 = row.insertCell(3);
 
        //fill cells
-       cell1.innerHTML = inputType;
+       cell1.innerHTML = "<img src='icons/" + inputType + ".svg'>";
        cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
        cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
        cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
