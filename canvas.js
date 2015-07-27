@@ -264,13 +264,15 @@
    function DrawCoords(pos) {
        ctx.globalAlpha = 0.9;
        ctx.fillStyle = '#757575';
-       DrawRoundedRect(pos.x - 40, pos.y + 15, 80, 40, 10, true, false);
+       DrawRoundedRect(pos.x - 30, pos.y + 15, 60, 30, 7, true, false);
        ctx.globalAlpha = 1;
        ctx.fillStyle = '#ffffff';
 
-       ctx.font = "12px Roboto";
-       ctx.fillText("x: " + pos.origX.toPrecision(3), pos.x - 35, pos.y + 30);
-       ctx.fillText("y: " + pos.origY.toPrecision(3), pos.x - 35, pos.y + 45);
+       ctx.font = "500 11px Roboto";
+
+       ctx.textAlign = 'center';
+       ctx.fillText("x: " + pos.origX.toPrecision(3), pos.x, pos.y + 27);
+       ctx.fillText("y: " + pos.origY.toPrecision(3), pos.x, pos.y + 40);
    };
 
    function DrawRoundedRect(x, y, width, height, radius, fill, stroke) {
