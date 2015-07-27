@@ -271,8 +271,8 @@
        ctx.font = "500 11px Roboto";
 
        ctx.textAlign = 'center';
-       ctx.fillText("x: " + pos.origX.toPrecision(3), pos.x, pos.y + 27);
-       ctx.fillText("y: " + pos.origY.toPrecision(3), pos.x, pos.y + 40);
+       ctx.fillText("x: " + pos.origX.toFixed(2), pos.x, pos.y + 27);
+       ctx.fillText("y: " + pos.origY.toFixed(2), pos.x, pos.y + 40);
    };
 
    function DrawRoundedRect(x, y, width, height, radius, fill, stroke) {
