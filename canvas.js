@@ -98,16 +98,6 @@
            var posX = parseFloat(table.rows[i].cells[1].children[0].value);
            var posY = parseFloat(table.rows[i].cells[2].children[0].value);
 
-           if (posX != 0) {
-               scaleX = maxSize / Math.abs(posX);
-               if (scaleX < scale) scale = scaleX;
-           }
-
-           if (posY != 0) {
-               scaleY = maxSize / Math.abs(posY);
-               if (scaleY < scale) scale = scaleY;
-           }
-
            switch (type) {
            case "point":
                break;
@@ -123,6 +113,16 @@
                break;
            default:
                continue;
+           }
+
+           if (posX != 0) {
+               scaleX = maxSize / Math.abs(posX);
+               if (scaleX < scale) scale = scaleX;
+           }
+
+           if (posY != 0) {
+               scaleY = maxSize / Math.abs(posY);
+               if (scaleY < scale) scale = scaleY;
            }
 
            array.push(ModifyPosition({
