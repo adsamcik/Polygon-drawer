@@ -31,7 +31,7 @@
             position: fixed;
             top: 3%;
             left: 3%;
-            width: 240px;
+            width: 290px;
             max-height: 50%;
         }
         
@@ -53,6 +53,7 @@
         #table th,
         #table td {
             padding: 5px 10px;
+            border-collapse: collapse;
         }
         
         #table th {
@@ -66,7 +67,15 @@
         }
         
         .coordInput {
-            width: 80px;
+            width: 70px;
+        }
+        
+        input.invalid {
+            border-bottom-color: firebrick;
+        }
+        
+        .invalid {
+            color: firebrick;
         }
         
         .is-active {
@@ -76,4 +85,11 @@
         
         .clickable {
             cursor: pointer;
+        }
+        
+        .cellCollapsed {
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            box-sizing: border-box;
         }

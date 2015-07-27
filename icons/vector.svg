@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" width="256" height="256" viewBox="0 0 256 256">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" width="23.987" height="23.987" viewBox="0 0 256 256">
   <defs>
     <style>
       .cls-1, .cls-2 {
@@ -11,8 +11,8 @@
     </style>
   </defs>
   <g>
-    <circle cx="200" cy="128" r="42" class="cls-1"/>
-    <rect x="81" y="118" width="113" height="21" class="cls-1"/>
-    <path d="M20.000,128.000 L82.000,79.998 L82.000,176.002 L20.000,128.000 Z" class="cls-2"/>
+    <circle cx="193.656" cy="145.859" r="42" class="cls-1"/>
+    <path d="M81.292,105.400 L190.442,134.646 L185.006,154.931 L75.857,125.684 L81.292,105.400 Z" class="cls-2"/>
+    <path d="M19.782,99.271 L92.093,68.952 L67.246,161.684 L19.782,99.271 Z" class="cls-2"/>
   </g>
 </svg>

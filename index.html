@@ -18,9 +18,9 @@
     <table id="table" class="mdl-shadow--2dp">
         <thead>
             <tr>
-                <th></th>
-                <th class="mdl-data-table__cell--non-numeric coordInput">Position X</th>
-                <th class="mdl-data-table__cell--non-numeric coordInput">Position Y</th>
+                <th class="cellCollapsed"></th>
+                <th class="coordInput">X</th>
+                <th class="coordInput">Y</th>
                 <th>
                     <!-- Right aligned menu below button -->
                     <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
@@ -45,8 +45,8 @@
             <span class="mdl-tabs__tab clickable" onclick="SetInputType(this)">vector</span>
         </div>
         <div style="padding: 10px; text-align: center; margin: 10px 0;">
-            <input type='text' onkeypress='return CheckKey(event)' placeholder="X" class="coordInput inline">
-            <input type='text' onkeypress='return CheckKey(event)' placeholder="Y" class="coordInput inline">
+            <input type='text' id="inputX" onkeypress='return CheckKey(event)' onchange="IsValid(this)" placeholder="X" class="coordInput inline">
+            <input type='text' id="inputY" onkeypress='return CheckKey(event)' onchange="IsValid(this)" placeholder="Y" class="coordInput inline">
         </div>
         <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored addButton" onclick="AddPoint()">
             <i class="material-icons">add</i>

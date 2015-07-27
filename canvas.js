@@ -25,6 +25,9 @@
    var inputType;
    SetInputType(document.getElementById('input-type-select').children[0]);
 
+   var inputX = document.getElementById('inputX');
+   var inputY = document.getElementById('inputY');
+
    function CheckKey(event) {
        var key = event.keyCode || event.charCode;
        //allowed keys are 1-9, backspace, delete and -
@@ -32,6 +35,9 @@
    };
 
    function AddPoint() {
+       if (!IsValid(inputX) || !IsValid(inputY))
+           return;
+
        var row = table.insertRow();
        row.dataset.id = ++nextIndex;
 
@@ -40,13 +46,26 @@
        var cell2 = row.insertCell(1);
        var cell3 = row.insertCell(2);
        var cell4 = row.insertCell(3);
-
        //fill cells
-       cell1.innerHTML = "<img src='icons/" + inputType + ".svg'>";
-       cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
-       cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='0'>";
+       cell1.innerHTML = "<img src='icons/" + inputType + ".svg' width='24'>";
+       cell1.className = 'cellCollapsed';
+       cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
+       cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
        cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
+
+       inputX.value = "";
+       inputY.value = "";
    };
+
+   function IsValid(inputField) {
+       if (inputField.value.trim() == "") {
+           inputField.className += ' invalid';
+           return false;
+       } else {
+           inputField.className = inputX.className.replace(' invalid', '');
+           return true;
+       }
+   }
 
    function RemovePoint(index) {
        for (var i = 0; i < table.rows.length; i++) {
