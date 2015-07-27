@@ -49,6 +49,7 @@
        //fill cells
        cell1.innerHTML = "<img src='icons/" + inputType + ".svg' width='24'>";
        cell1.className = 'cellCollapsed';
+       cell1.dataset.type = inputType;
        cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
        cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
        cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
@@ -93,6 +94,7 @@
        scale = 9999;
 
        for (var i = 1; i < table.rows.length; i++) {
+           var type = table.rows[i].cells[0].dataset.type;
            var posX = parseFloat(table.rows[i].cells[1].children[0].value);
            var posY = parseFloat(table.rows[i].cells[2].children[0].value);
 
@@ -104,6 +106,23 @@
            if (posY != 0) {
                scaleY = maxSize / Math.abs(posY);
                if (scaleY < scale) scale = scaleY;
+           }
+
+           switch (type) {
+           case "point":
+               break;
+           case "vector":
+               if (array.length == 0)
+                   array.push(ModifyPosition({
+                       x: 0,
+                       y: 0
+                   }));
+
+               posX += array[array.length - 1].origX;
+               posY += array[array.length - 1].origY;
+               break;
+           default:
+               continue;
            }
 
            array.push(ModifyPosition({
@@ -146,7 +165,6 @@
        ctx.lineWidth = 2;
 
        for (var i = 0; i < array.length - 1; i++) {
-           console.log(array[i]);
            ctx.beginPath();
            ctx.moveTo(array[i].x, array[i].y);
            ctx.lineTo(array[i + 1].x, array[i + 1].y);
@@ -281,7 +299,7 @@
 
            var scaleFix = (scale * scaler * 2);
            result.origX = (result.x - halfWidth) / scaleFix * 2;
-           result.origY = (result.y - halfHeight) / scaleFix * 2;
+           result.origY = -(result.y - halfHeight) / scaleFix * 2;
        }
 
        return result;
