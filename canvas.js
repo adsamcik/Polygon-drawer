@@ -93,8 +93,8 @@
        scale = 9999;
 
        for (var i = 1; i < table.rows.length; i++) {
-           var posX = parseFloat(table.rows[i].cells[0].children[0].value);
-           var posY = parseFloat(table.rows[i].cells[1].children[0].value);
+           var posX = parseFloat(table.rows[i].cells[1].children[0].value);
+           var posY = parseFloat(table.rows[i].cells[2].children[0].value);
 
            if (posX != 0) {
                scaleX = maxSize / Math.abs(posX);
@@ -146,6 +146,7 @@
        ctx.lineWidth = 2;
 
        for (var i = 0; i < array.length - 1; i++) {
+           console.log(array[i]);
            ctx.beginPath();
            ctx.moveTo(array[i].x, array[i].y);
            ctx.lineTo(array[i + 1].x, array[i + 1].y);
