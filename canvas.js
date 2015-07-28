@@ -1,3 +1,4 @@
+   //table setup
    var table = document.getElementById("table");
    var nextIndex = 0;
 
@@ -7,85 +8,27 @@
    canvas.addEventListener('mousedown', SaveIntersection, false);
 
    Rebuild();
-   var ctx = canvas.getContext("2d");
 
+   //canvas vars
+   var ctx = canvas.getContext("2d");
    var mouse = {};
    var scale, maxSize, halfMaxSize, halfWidth, halfHeight;
    var horizontalIntersect = true;
    var enableMouseLine = true;
    var hideIntersections = false;
    var scaler = 0.48;
-
    var savedILines = [];
 
    //set for 50fps
    var updateInt = setInterval(Update, 20);
 
+   //Input vars
    var selectedTab;
    var inputType;
    SetInputType(document.getElementById('input-type-select').children[0]);
 
    var inputX = document.getElementById('inputX');
    var inputY = document.getElementById('inputY');
-
-   function CheckKey(event) {
-       var key = event.keyCode || event.charCode;
-       //allowed keys are 1-9, backspace, delete and -
-       return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
-   };
-
-   function AddPoint() {
-       if (!IsValid(inputX) || !IsValid(inputY))
-           return;
-
-       var row = table.insertRow();
-       row.dataset.id = ++nextIndex;
-
-       //insert cells
-       var cell1 = row.insertCell(0);
-       var cell2 = row.insertCell(1);
-       var cell3 = row.insertCell(2);
-       var cell4 = row.insertCell(3);
-       //fill cells
-       cell1.innerHTML = "<img src='icons/" + inputType + ".svg' width='24'>";
-       cell1.className = 'cellCollapsed';
-       cell1.dataset.type = inputType;
-       cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
-       cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
-       cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
-
-       inputX.value = "";
-       inputY.value = "";
-   };
-
-   function IsValid(inputField) {
-       if (inputField.value.trim() == "") {
-           inputField.className += ' invalid';
-           return false;
-       } else {
-           inputField.className = inputX.className.replace(' invalid', '');
-           return true;
-       }
-   }
-
-   function RemovePoint(index) {
-       for (var i = 0; i < table.rows.length; i++) {
-           if (table.rows[i].dataset.id == index) {
-               table.deleteRow(i);
-               break;
-           }
-       }
-   };
-
-   function Rebuild() {
-       canvas.width = window.innerWidth;
-       canvas.height = window.innerHeight;
-       halfWidth = canvas.width / 2;
-       halfHeight = canvas.height / 2;
-       maxSize = canvas.width > canvas.height ? canvas.height : canvas.width;
-       halfMaxSize = maxSize / 2;
-
-   };
 
    function Update() {
        ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -139,6 +82,39 @@
 
            if (!hideIntersections)
                DrawIntersections(array);
+       }
+   };
+
+   function AddPoint() {
+       if (!IsValid(inputX) || !IsValid(inputY))
+           return;
+
+       var row = table.insertRow();
+       row.dataset.id = ++nextIndex;
+
+       //insert cells
+       var cell1 = row.insertCell(0);
+       var cell2 = row.insertCell(1);
+       var cell3 = row.insertCell(2);
+       var cell4 = row.insertCell(3);
+       //fill cells
+       cell1.innerHTML = "<img src='icons/" + inputType + ".svg' width='24'>";
+       cell1.className = 'cellCollapsed';
+       cell1.dataset.type = inputType;
+       cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
+       cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
+       cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'> <i class='material-icons'>remove</i></button>";
+
+       inputX.value = "";
+       inputY.value = "";
+   };
+
+   function RemovePoint(index) {
+       for (var i = 0; i < table.rows.length; i++) {
+           if (table.rows[i].dataset.id == index) {
+               table.deleteRow(i);
+               break;
+           }
        }
    };
 
@@ -272,39 +248,6 @@
            };
    };
 
-   function CheckLineIntersection(line1, line2) {
-       // if the lines intersect, the result contains the x and y of the intersection (treating the lines as infinite) and booleans for whether line segment 1 or line segment 2 contain the point
-       var denominator, a, b, numerator1, numerator2, result = {
-           x: null,
-           y: null,
-           intersects: false
-       };
-       denominator = ((line2.end.y - line2.start.y) * (line1.end.x - line1.start.x)) - ((line2.end.x - line2.start.x) * (line1.end.y - line1.start.y));
-
-       if (denominator == 0) {
-           return result;
-       }
-
-       a = line1.start.y - line2.start.y;
-       b = line1.start.x - line2.start.x;
-       numerator1 = ((line2.end.x - line2.start.x) * a) - ((line2.end.y - line2.start.y) * b);
-       numerator2 = ((line1.end.x - line1.start.x) * a) - ((line1.end.y - line1.start.y) * b);
-       a = numerator1 / denominator;
-       b = numerator2 / denominator;
-
-       if (b > 0 && b < 1 && a > 0 && a < 1) {
-           result.intersects = true;
-           result.x = line1.start.x + (a * (line1.end.x - line1.start.x));
-           result.y = line1.start.y + (a * (line1.end.y - line1.start.y));
-
-           var scaleFix = (scale * scaler * 2);
-           result.origX = (result.x - halfWidth) / scaleFix * 2;
-           result.origY = -(result.y - halfHeight) / scaleFix * 2;
-       }
-
-       return result;
-   };
-
    function DrawCoords(pos) {
        ctx.globalAlpha = 0.9;
        ctx.fillStyle = '#757575';
@@ -345,6 +288,40 @@
        }
    }
 
+   function CheckLineIntersection(line1, line2) {
+       // if the lines intersect, the result contains the x and y of the intersection (treating the lines as infinite) and booleans for whether line segment 1 or line segment 2 contain the point
+       var denominator, a, b, numerator1, numerator2, result = {
+           x: null,
+           y: null,
+           intersects: false
+       };
+       denominator = ((line2.end.y - line2.start.y) * (line1.end.x - line1.start.x)) - ((line2.end.x - line2.start.x) * (line1.end.y - line1.start.y));
+
+       if (denominator == 0) {
+           return result;
+       }
+
+       a = line1.start.y - line2.start.y;
+       b = line1.start.x - line2.start.x;
+       numerator1 = ((line2.end.x - line2.start.x) * a) - ((line2.end.y - line2.start.y) * b);
+       numerator2 = ((line1.end.x - line1.start.x) * a) - ((line1.end.y - line1.start.y) * b);
+       a = numerator1 / denominator;
+       b = numerator2 / denominator;
+
+       if (b > 0 && b < 1 && a > 0 && a < 1) {
+           result.intersects = true;
+           result.x = line1.start.x + (a * (line1.end.x - line1.start.x));
+           result.y = line1.start.y + (a * (line1.end.y - line1.start.y));
+
+           var scaleFix = (scale * scaler * 2);
+           result.origX = (result.x - halfWidth) / scaleFix * 2;
+           result.origY = -(result.y - halfHeight) / scaleFix * 2;
+       }
+
+       return result;
+   };
+
+
    //onmove sets mouse position
    function SetMousePosition(event) {
        mouse.x = event.pageX;
@@ -368,3 +345,29 @@
        selectedTab = elem;
        elem.className += ' is-active';
    }
+
+   function CheckKey(event) {
+       var key = event.keyCode || event.charCode;
+       //allowed keys are 1-9, backspace, delete and -
+       return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
+   };
+
+   function IsValid(inputField) {
+       if (inputField.value.trim() == "") {
+           inputField.className += ' invalid';
+           return false;
+       } else {
+           inputField.className = inputX.className.replace(' invalid', '');
+           return true;
+       }
+   }
+
+   function Rebuild() {
+       canvas.width = window.innerWidth;
+       canvas.height = window.innerHeight;
+       halfWidth = canvas.width / 2;
+       halfHeight = canvas.height / 2;
+       maxSize = canvas.width > canvas.height ? canvas.height : canvas.width;
+       halfMaxSize = maxSize / 2;
+
+   };
