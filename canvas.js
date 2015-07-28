@@ -58,27 +58,30 @@ function Update() {
         //Special type actions
         switch (data.type) {
             case "vector":
-                if (array.length == 0)
+                //If the vector is first point, add 0,0 point
+                if (i == 1)
                     array.push({ x: 0, y: 0 });
-
+                    
+                //Add position from previous element (Converting vector to point internally)
                 data.pos.x += array[array.length - 1].x;
-                data.pos.x += array[array.length - 1].y;
+                data.pos.y += array[array.length - 1].y;
                 break;
             default:
                 continue;
         }
 
         //check if its the highest or lowest yet
-        if (max.x == null || data.pos.x > max.x) max.x = data.pos.x;
-        else if (min.x == null || data.pos.x < min.x) min.x = data.pos.x;
+        if (data.pos.x > max.x) max.x = data.pos.x;
+        else if (data.pos.x < min.x) min.x = data.pos.x;
 
-        if (max.y == null || data.pos.y > max.y) max.y = data.pos.y;
-        else if (min.y == null || data.pos.y < min.y) min.y = data.pos.y;
+        if (data.pos.y > max.y) max.y = data.pos.y;
+        else if (data.pos.y < min.y) min.y = data.pos.y;
 
         //insert item to array
-        array.push({ x: data.pos.x, y: data.pos.y });
+        array.push(data.pos);
     }
 
+    //find the biggest value for scaling purpose
     var maxDist = Math.abs(max.x);
     maxDist = ReturnAbsBigger(maxDist, max.y);
     maxDist = ReturnAbsBigger(maxDist, min.x);
@@ -104,39 +107,6 @@ function RecountUpdate() {
 //Prepared for future optimalizations
 function DrawUpdate() {
 
-}
-
-function AddPoint() {
-    if (!IsValid(inputX) || !IsValid(inputY))
-        return;
-
-    var row = table.insertRow();
-    row.dataset.id = ++nextIndex;
-
-    //insert cells
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
-    //fill cells
-    cell1.innerHTML = "<img src='icons/" + inputType + ".svg' width='24'>";
-    cell1.className = 'cellCollapsed';
-    cell1.dataset.type = inputType;
-    cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
-    cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
-    cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'><img src='icons/remove.svg' width='24px'></button>";
-
-    inputX.value = "";
-    inputY.value = "";
-}
-
-function RemovePoint(index) {
-    for (var i = 0; i < table.rows.length; i++) {
-        if (table.rows[i].dataset.id == index) {
-            table.deleteRow(i);
-            break;
-        }
-    }
 }
 
 function ScalePosition(position, center) {
@@ -385,5 +355,38 @@ function IsValid(inputField) {
     } else {
         inputField.className = inputX.className.replace(' invalid', '');
         return true;
+    }
+}
+
+function AddPoint() {
+    if (!IsValid(inputX) || !IsValid(inputY))
+        return;
+
+    var row = table.insertRow();
+    row.dataset.id = ++nextIndex;
+
+    //insert cells
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    //fill cells
+    cell1.innerHTML = "<img src='icons/" + inputType + ".svg' width='24'>";
+    cell1.className = 'cellCollapsed';
+    cell1.dataset.type = inputType;
+    cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
+    cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
+    cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'><img src='icons/remove.svg' width='24px'></button>";
+
+    inputX.value = "";
+    inputY.value = "";
+}
+
+function RemovePoint(index) {
+    for (var i = 0; i < table.rows.length; i++) {
+        if (table.rows[i].dataset.id == index) {
+            table.deleteRow(i);
+            break;
+        }
     }
 }
