@@ -1,95 +1,95 @@
-        body {
-            font-family: Roboto;
-        }
-        
-        input {
-            width: 100%;
-            border: 0;
-            border-bottom: 2px solid rgba(0, 0, 0, 0.12);
-            color: rgba(0, 0, 0, 0.5);
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        input:focus {
-            outline: none;
-            color: #3F51B5;
-            border-bottom-color: #3F51B5;
-        }
-        
-        #newPointWrapper {
-            position: fixed;
-            bottom: 30px;
-            right: 3%;
-            padding-bottom: 20px;
-            width: 240px;
-            border: 0;
-            background: rgba(255, 255, 255, 0.9);
-        }
-        
-        #table {
-            position: fixed;
-            top: 3%;
-            left: 3%;
-            width: 290px;
-            max-height: 50%;
-        }
-        
-        #canvas,
-        body,
-        html {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-        }
-        
-        .addButton {
-            position: absolute;
-            right: 10px;
-        }
-        
-        #table th,
-        #table td {
-            padding: 5px 10px;
-            border-collapse: collapse;
-        }
-        
-        #table th {
-            font-weight: bold;
-            padding: 10px;
-        }
-        
-        .inline {
-            display: inline-block;
-            margin-right: 5px;
-        }
-        
-        .coordInput {
-            width: 70px;
-        }
-        
-        input.invalid {
-            border-bottom-color: firebrick;
-        }
-        
-        .invalid {
-            color: firebrick;
-        }
-        
-        .is-active {
-            box-sizing: border-box;
-            border-bottom: 4px #3F51B5 solid;
-        }
-        
-        .clickable {
-            cursor: pointer;
-        }
-        
-        .cellCollapsed {
-            padding: 0;
-            width: 24px;
-            height: 24px;
-            box-sizing: border-box;
-        }
+body {
+    font-family: Roboto;
+}
+
+input {
+    width: 100%;
+    border: 0;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.5);
+    font-weight: bold;
+    text-align: center;
+}
+
+input:focus {
+    outline: none;
+    color: #3F51B5;
+    border-bottom-color: #3F51B5;
+}
+
+#newPointWrapper {
+    position: fixed;
+    bottom: 30px;
+    right: 3%;
+    padding-bottom: 20px;
+    width: 240px;
+    border: 0;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+#table {
+    position: fixed;
+    top: 3%;
+    left: 3%;
+    width: 290px;
+    max-height: 50%;
+}
+
+#canvas,
+body,
+html {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.addButton {
+    position: absolute;
+    right: 10px;
+}
+
+#table th,
+#table td {
+    padding: 5px 10px;
+    border-collapse: collapse;
+}
+
+#table th {
+    font-weight: bold;
+    padding: 10px;
+}
+
+.inline {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.coordInput {
+    width: 70px;
+}
+
+input.invalid {
+    border-bottom-color: firebrick;
+}
+
+.invalid {
+    color: firebrick;
+}
+
+.is-active {
+    box-sizing: border-box;
+    border-bottom: 4px #3F51B5 solid;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.cellCollapsed {
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+}
