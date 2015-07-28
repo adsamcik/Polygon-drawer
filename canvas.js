@@ -13,6 +13,7 @@ Rebuild();
 var ctx = canvas.getContext("2d");
 var mouse = {};
 var scale, maxSize, halfMaxSize, halfWidth, halfHeight, min, max;
+var center = { x: 0, y: 0 };
 var horizontalIntersect = true;
 var enableMouseLine = true;
 var hideIntersections = false;
@@ -37,6 +38,7 @@ var inputY = document.getElementById('inputY');
 
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
+
     //Loads first row to min and max data
     if (table.rows.length > 1) {
         var firstRow = ParseData(table.rows[1]);
@@ -66,8 +68,6 @@ function Update() {
                 data.pos.x += array[array.length - 1].x;
                 data.pos.y += array[array.length - 1].y;
                 break;
-            default:
-                continue;
         }
 
         //check if its the highest or lowest yet
@@ -80,6 +80,8 @@ function Update() {
         //insert item to array
         array.push(data.pos);
     }
+    
+    console.log(array.length);
 
     //find the biggest value for scaling purpose
     var maxDist = Math.abs(max.x);
@@ -88,7 +90,7 @@ function Update() {
     maxDist = ReturnAbsBigger(maxDist, min.y);
 
     scale = maxSize / maxDist;
-    var center = { x: (max.x + min.x) / 2, y: (max.y + min.y) / 2 };
+    center = { x: (max.x + min.x) / 2, y: (max.y + min.y) / 2 };
 
     if (array.length > 1) {
         if (closePolygon) array.push(array[0]);
@@ -107,14 +109,6 @@ function RecountUpdate() {
 //Prepared for future optimalizations
 function DrawUpdate() {
 
-}
-
-function ScalePosition(position, center) {
-    var halfScale = scale * scaler;
-    return {
-        x: (center.x - position.x) * halfScale + halfWidth,
-        y: -(center.y - position.y) * halfScale + halfHeight
-    }
 }
 
 function DrawIntersections(array) {
@@ -138,6 +132,14 @@ function ParseData(row) {
     }
 }
 
+function ScalePosition(position, center) {
+    var halfScale = scale * scaler;
+    return {
+        x: (center.x - position.x) * halfScale + halfWidth,
+        y: -(center.y - position.y) * halfScale + halfHeight
+    }
+}
+
 function ReturnAbsBigger(value, value2) {
     var absVal = Math.abs(value);
     var absVal2 = Math.abs(value2);
@@ -151,26 +153,27 @@ function CheckLineIntersection(line1, line2) {
         y: null,
         intersects: false
     };
-    denominator = ((line2.end.modY - line2.start.modY) * (line1.end.x - line1.start.modX)) - ((line2.end.modX - line2.start.modX) * (line1.end.y - line1.start.modY));
+    denominator = ((line2.end.y - line2.start.y) * (line1.end.x - line1.start.x)) - ((line2.end.x - line2.start.x) * (line1.end.y - line1.start.y));
 
     if (denominator == 0)
         return result;
 
-    a = line1.start.modY - line2.start.modY;
-    b = line1.start.modX - line2.start.modX;
-    numerator1 = ((line2.end.modX - line2.start.modX) * a) - ((line2.end.modY - line2.start.modY) * b);
-    numerator2 = ((line1.end.x - line1.start.modX) * a) - ((line1.end.y - line1.start.modY) * b);
+    a = line1.start.y - line2.start.y;
+    b = line1.start.x - line2.start.x;
+    numerator1 = ((line2.end.x - line2.start.x) * a) - ((line2.end.y - line2.start.y) * b);
+    numerator2 = ((line1.end.x - line1.start.x) * a) - ((line1.end.y - line1.start.y) * b);
     a = numerator1 / denominator;
     b = numerator2 / denominator;
 
     if (b > 0 && b < 1 && a > 0 && a < 1) {
         result.intersects = true;
-        result.x = line1.start.modX + (a * (line1.end.x - line1.start.modX));
-        result.y = line1.start.modY + (a * (line1.end.y - line1.start.modY));
+        result.x = line1.start.x + (a * (line1.end.x - line1.start.x));
+        result.y = line1.start.y + (a * (line1.end.y - line1.start.y));
 
-        var scaleFix = (scale * scaler * 2);
-        result.origX = (result.x - halfWidth) / scaleFix * 2;
-        result.origY = -(result.y - halfHeight) / scaleFix * 2;
+        //var scaleFix = (scale * scaler * 2);
+        //result.origX = (result.x - halfWidth) / scaleFix * 2;
+        //result.origY = -(result.y - halfHeight) / scaleFix * 2;
+        ScalePosition(result, center);
     }
 
     return result;
@@ -211,6 +214,7 @@ function DrawLines(array, center) {
         ctx.moveTo(pos.x, pos.y);
 
         pos = ScalePosition(array[i + 1], center);
+        console.log(pos);
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
     }
