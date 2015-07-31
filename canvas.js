@@ -42,8 +42,8 @@ function Update() {
     //Loads first row to min and max data
     if (table.rows.length > 1) {
         var firstRow = ParseData(table.rows[1]);
-        min = firstRow.pos;
-        max = firstRow.pos;
+        min = {x: firstRow.pos.x, y: firstRow.pos.y};
+        max = {x: firstRow.pos.x, y: firstRow.pos.y};
     }
     else
         return;
@@ -52,7 +52,6 @@ function Update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "#000000";
     var array = [];
-
     for (var i = 1; i < table.rows.length; i++) {
         //load info from table
         var data = ParseData(table.rows[i]);
@@ -81,7 +80,7 @@ function Update() {
         array.push(data.pos);
     }
     
-    console.log(array.length);
+    console.log(max);
 
     //find the biggest value for scaling purpose
     var maxDist = Math.abs(max.x);
@@ -89,6 +88,7 @@ function Update() {
     maxDist = ReturnAbsBigger(maxDist, min.x);
     maxDist = ReturnAbsBigger(maxDist, min.y);
 
+    console.log(maxDist);
     scale = maxSize / maxDist;
     center = { x: (max.x + min.x) / 2, y: (max.y + min.y) / 2 };
 
@@ -140,10 +140,10 @@ function ScalePosition(position, center) {
     }
 }
 
-function ReturnAbsBigger(value, value2) {
-    var absVal = Math.abs(value);
-    var absVal2 = Math.abs(value2);
-    return absVal > absVal2 ? absVal : absVal2;
+function ReturnAbsBigger(currentVal, newVal) {
+    var absCur = Math.abs(currentVal);
+    var absNew = Math.abs(newVal);
+    return absNew > absCur ? absNew : absCur;
 }
 
 function CheckLineIntersection(line1, line2) {
@@ -207,7 +207,7 @@ function IsMouseInRange(pos, radius) {
 function DrawLines(array, center) {
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 2;
-
+    console.log(array);
     for (var i = 0; i < array.length - 1; i++) {
         ctx.beginPath();
         var pos = ScalePosition(array[i], center);
@@ -251,8 +251,6 @@ function DrawIntersection(iLine, array, enableMouseInteraction) {
         for (var i = 0; i < intersections.length; i++) {
             if (enableMouseInteraction)
                 var mouseInRange = IsMouseInRange(intersections[i], 10);
-            else
-                var mouseInRange = false;
 
             var radius = mouseInRange ? 10 : 5;
             if (mouseInRange) DrawCoords(intersections[i]);
