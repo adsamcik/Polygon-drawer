@@ -42,8 +42,8 @@ function Update() {
     //Loads first row to min and max data
     if (table.rows.length > 1) {
         var firstRow = ParseData(table.rows[1]);
-        min = {x: firstRow.pos.x, y: firstRow.pos.y};
-        max = {x: firstRow.pos.x, y: firstRow.pos.y};
+        min = { x: firstRow.pos.x, y: firstRow.pos.y };
+        max = { x: firstRow.pos.x, y: firstRow.pos.y };
     }
     else
         return;
@@ -79,8 +79,6 @@ function Update() {
         //insert item to array
         array.push(data.pos);
     }
-    
-    console.log(max);
 
     //find the biggest value for scaling purpose
     var maxDist = Math.abs(max.x);
@@ -88,13 +86,12 @@ function Update() {
     maxDist = ReturnAbsBigger(maxDist, min.x);
     maxDist = ReturnAbsBigger(maxDist, min.y);
 
-    console.log(maxDist);
     scale = maxSize / maxDist;
     center = { x: (max.x + min.x) / 2, y: (max.y + min.y) / 2 };
 
     if (array.length > 1) {
         if (closePolygon) array.push(array[0]);
-        DrawLines(array, center);
+        DrawLines(array);
 
         if (!hideIntersections)
             DrawIntersections(array);
@@ -132,12 +129,20 @@ function ParseData(row) {
     }
 }
 
-function ScalePosition(position, center) {
+function ScaleToDraw(position) {
     var halfScale = scale * scaler;
     return {
         x: (center.x - position.x) * halfScale + halfWidth,
         y: -(center.y - position.y) * halfScale + halfHeight
     }
+}
+
+function ScaleToOriginal(pos) {
+    var halfScale = scale * scaler;
+    return {
+        x: center.x - ((pos.x - halfWidth) / halfScale),
+        y: center.y + ((pos.y - halfHeight) / halfScale)
+    };
 }
 
 function ReturnAbsBigger(currentVal, newVal) {
@@ -169,11 +174,7 @@ function CheckLineIntersection(line1, line2) {
         result.intersects = true;
         result.x = line1.start.x + (a * (line1.end.x - line1.start.x));
         result.y = line1.start.y + (a * (line1.end.y - line1.start.y));
-
-        //var scaleFix = (scale * scaler * 2);
-        //result.origX = (result.x - halfWidth) / scaleFix * 2;
-        //result.origY = -(result.y - halfHeight) / scaleFix * 2;
-        ScalePosition(result, center);
+        result.draw = ScaleToDraw(result);
     }
 
     return result;
@@ -182,20 +183,20 @@ function CheckLineIntersection(line1, line2) {
 function GetMouseLine() {
     if (horizontalIntersect)
         return {
-            start: { x: halfWidth - halfMaxSize, y: mouse.y },
-            end: { x: halfWidth + halfMaxSize, y: mouse.y }
+            start: ScaleToOriginal({ x: halfWidth - halfMaxSize, y: mouse.y }),
+            end: ScaleToOriginal({ x: halfWidth + halfMaxSize, y: mouse.y })
         };
     else
         return {
-            start: { x: mouse.x, y: halfHeight - halfMaxSize },
-            end: { x: mouse.x, y: halfHeight + halfMaxSize }
+            start: ScaleToOriginal({ x: mouse.x, y: halfHeight - halfMaxSize }),
+            end: ScaleToOriginal({ x: mouse.x, y: halfHeight + halfMaxSize })
         };
 }
 
 function IsMouseInRange(pos, radius) {
     var distanceVector = {
-        x: Math.abs(mouse.x - pos.x),
-        y: Math.abs(mouse.y - pos.y)
+        x: Math.abs(mouse.x - pos.draw.x),
+        y: Math.abs(mouse.y - pos.draw.y)
     };
     var distanceSqrd = distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y;
     return distanceSqrd < radius * radius;
@@ -204,17 +205,16 @@ function IsMouseInRange(pos, radius) {
 
 
 //CANVAS FUNCTIONS
-function DrawLines(array, center) {
+function DrawLines(array) {
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 2;
-    console.log(array);
     for (var i = 0; i < array.length - 1; i++) {
+        //console.log("from (" + array[i].x + ", " + array[i].y + ") to (" + array[i+1].x + ", " + array[i+1].y + ")");
         ctx.beginPath();
-        var pos = ScalePosition(array[i], center);
+        var pos = ScaleToDraw(array[i]);
         ctx.moveTo(pos.x, pos.y);
 
-        pos = ScalePosition(array[i + 1], center);
-        console.log(pos);
+        pos = ScaleToDraw(array[i + 1]);
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
     }
@@ -234,49 +234,50 @@ function DrawIntersection(iLine, array, enableMouseInteraction) {
         if (result.intersects)
             intersections.push(result);
     }
+    //draws base line for the intersections
+    ctx.beginPath();
+    ctx.lineWidth = 2;
+    ctx.setLineDash([10]);
+    
+    var startScaled = ScaleToDraw(iLine.start);
+    ctx.moveTo(startScaled.x, startScaled.y);
+    
+    var endScaled = ScaleToDraw(iLine.end);
+    ctx.lineTo(endScaled.x, endScaled.y);
+    
+    ctx.closePath();
+    ctx.strokeStyle = '#9297B5';
+    ctx.stroke();
+    ctx.setLineDash([0]);
+    //draw every intersection point found
+    for (var i = 0; i < intersections.length; i++) {
+        if (enableMouseInteraction)
+            var mouseInRange = IsMouseInRange(intersections[i], 10);
 
-    //if intersections found, draw
-    if (intersections.length > 0) {
-        //draws base line for the intersections
+        var radius = mouseInRange ? 10 : 5;
+        if (mouseInRange) DrawCoords(intersections[i]);
         ctx.beginPath();
-        ctx.lineWidth = 2;
-        ctx.setLineDash([10]);
-        ctx.moveTo(iLine.start.modX, iLine.start.modY);
-        ctx.lineTo(iLine.end.x, iLine.end.y);
+        ctx.arc(intersections[i].draw.x, intersections[i].draw.y, radius, 0, 2 * Math.PI, false);
         ctx.closePath();
-        ctx.strokeStyle = '#9297B5';
+        ctx.fillStyle = '#3F51B5';
+        ctx.fill();
+        ctx.lineWidth = 3;
         ctx.stroke();
-        ctx.setLineDash([0]);
-        //draw every intersection point found
-        for (var i = 0; i < intersections.length; i++) {
-            if (enableMouseInteraction)
-                var mouseInRange = IsMouseInRange(intersections[i], 10);
-
-            var radius = mouseInRange ? 10 : 5;
-            if (mouseInRange) DrawCoords(intersections[i]);
-            ctx.beginPath();
-            ctx.arc(intersections[i].x, intersections[i].y, radius, 0, 2 * Math.PI, false);
-            ctx.closePath();
-            ctx.fillStyle = '#3F51B5';
-            ctx.fill();
-            ctx.lineWidth = 3;
-            ctx.stroke();
-        }
     }
 }
 
 function DrawCoords(pos) {
     ctx.globalAlpha = 0.9;
     ctx.fillStyle = '#757575';
-    DrawRoundedRect(pos.x - 30, pos.y + 15, 60, 30, 7, true, false);
+    DrawRoundedRect(pos.draw.x - 30, pos.draw.y + 15, 60, 30, 7, true, false);
     ctx.globalAlpha = 1;
     ctx.fillStyle = '#ffffff';
 
     ctx.font = "500 11px Roboto";
 
     ctx.textAlign = 'center';
-    ctx.fillText("x: " + pos.origX.toFixed(2), pos.x, pos.y + 27);
-    ctx.fillText("y: " + pos.origY.toFixed(2), pos.x, pos.y + 40);
+    ctx.fillText("x: " + pos.x.toFixed(2), pos.draw.x, pos.draw.y + 27);
+    ctx.fillText("y: " + pos.y.toFixed(2), pos.draw.x, pos.draw.y + 40);
 };
 
 function DrawRoundedRect(x, y, width, height, radius, fill, stroke) {
