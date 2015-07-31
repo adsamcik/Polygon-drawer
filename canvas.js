@@ -132,16 +132,16 @@ function ParseData(row) {
 function ScaleToDraw(position) {
     var halfScale = scale * scaler;
     return {
-        x: (center.x - position.x) * halfScale + halfWidth,
-        y: -(center.y - position.y) * halfScale + halfHeight
+        x: (position.x) * halfScale + halfWidth,
+        y: -(position.y) * halfScale + halfHeight
     }
 }
 
 function ScaleToOriginal(pos) {
     var halfScale = scale * scaler;
     return {
-        x: center.x - ((pos.x - halfWidth) / halfScale),
-        y: center.y + ((pos.y - halfHeight) / halfScale)
+        x: ((pos.x - halfWidth) / halfScale),
+        y: -((pos.y - halfHeight) / halfScale)
     };
 }
 
@@ -212,6 +212,8 @@ function DrawLines(array) {
         //console.log("from (" + array[i].x + ", " + array[i].y + ") to (" + array[i+1].x + ", " + array[i+1].y + ")");
         ctx.beginPath();
         var pos = ScaleToDraw(array[i]);
+        console.log(pos);
+        console.log(array[i]);
         ctx.moveTo(pos.x, pos.y);
 
         pos = ScaleToDraw(array[i + 1]);
