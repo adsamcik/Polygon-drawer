@@ -89,6 +89,7 @@ function Update() {
     scale = maxSize / maxDist;
     center = { x: (max.x + min.x) / 2, y: (max.y + min.y) / 2 };
 
+    DrawCross();
     if (array.length > 1) {
         if (closePolygon) array.push(array[0]);
         DrawLines(array);
@@ -240,13 +241,13 @@ function DrawIntersection(iLine, array, enableMouseInteraction) {
     ctx.beginPath();
     ctx.lineWidth = 2;
     ctx.setLineDash([10]);
-    
+
     var startScaled = ScaleToDraw(iLine.start);
     ctx.moveTo(startScaled.x, startScaled.y);
-    
+
     var endScaled = ScaleToDraw(iLine.end);
     ctx.lineTo(endScaled.x, endScaled.y);
-    
+
     ctx.closePath();
     ctx.strokeStyle = '#9297B5';
     ctx.stroke();
@@ -307,6 +308,23 @@ function DrawRoundedRect(x, y, width, height, radius, fill, stroke) {
         ctx.fill();
     }
 }
+
+function DrawCross() {
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.moveTo(halfWidth, halfHeight - halfMaxSize);
+    ctx.lineTo(halfWidth, halfHeight + halfMaxSize);
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.beginPath();
+    ctx.moveTo(halfWidth - halfMaxSize, halfHeight);
+    ctx.lineTo(halfWidth + halfMaxSize, halfHeight);
+    ctx.stroke();
+    ctx.closePath();
+};
 
 
 
