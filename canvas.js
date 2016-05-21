@@ -1,3 +1,4 @@
+"use strict";
 //table setup
 var table = document.getElementById("table");
 var nextIndex = 0;
@@ -27,6 +28,7 @@ var savedILines = [];
 var updateInt = setInterval(Update, 20);
 
 //Input vars
+var polygonSelect = document.getElementById('add-polygon');
 var selectedTab;
 var inputType;
 SetInputType(document.getElementById('input-type-select').children[0]);
@@ -34,11 +36,36 @@ SetInputType(document.getElementById('input-type-select').children[0]);
 var inputX = document.getElementById('inputX');
 var inputY = document.getElementById('inputY');
 
+//polygons
+var polygonArray = []
 
+class Polygon {
+  constructor(index) {
+      this.index = index;
+      this.points = [];
+  }
+  
+  AddPoint(point) {
+      this.points.push(point);
+  }
+  
+  AddPoint(x,y) {
+      this.points.push({"x":x,"y":y});
+  }
+  
+  get points() {
+      return this.points;
+  }
+}
+
+function GenerateOption(name) {
+    var option = document.createElement("option");
+    option.text = name;
+    return option;
+}
 
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
-
     //Loads first row to min and max data
     if (table.rows.length > 1) {
         var firstRow = ParseData(table.rows[1]);
@@ -326,6 +353,13 @@ function DrawCross() {
     ctx.closePath();
 };
 
+function DrawPoint(pos) {
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#757575';
+    DrawRoundedRect(pos.draw.x - 30, pos.draw.y + 15, 60, 30, 7, true, false);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#ffffff';
+}
 
 
 //EVENTUALLY CALLED FUNCTIONS
@@ -336,9 +370,7 @@ function Rebuild() {
     halfHeight = canvas.height / 2;
     maxSize = canvas.width > canvas.height ? canvas.height : canvas.width;
     halfMaxSize = maxSize / 2;
-
 }
-
 
 
 //EVENT FUNCTIONS
@@ -382,7 +414,9 @@ function IsValid(inputField) {
 }
 
 function AddPoint() {
-    if (!IsValid(inputX) || !IsValid(inputY))
+    var valid = IsValid(inputX);
+    valid &= IsValid(inputY);
+    if (!valid)
         return;
 
     var row = table.insertRow();
@@ -413,3 +447,7 @@ function RemovePoint(index) {
         }
     }
 }
+
+//initialization
+polygonSelect.add(GenerateOption("Add new"));
+polygonSelect.add(GenerateOption("Point"));
