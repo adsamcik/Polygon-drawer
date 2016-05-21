@@ -1,19 +1,20 @@
+/// <reference path="Bounds.ts"/>
 
-function DrawRoundedRect(ctx, x, y, width, height, radius, fill, stroke) {
+function DrawRoundedRect(ctx: CanvasRenderingContext2D, p: Point, width, height, radius, fill, stroke) {
     if (typeof stroke == "undefined")
         stroke = true;
     if (typeof radius === "undefined")
         radius = 5;
     ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.moveTo(p.x + radius, p.y);
+    ctx.lineTo(p.x + width - radius, p.y);
+    ctx.quadraticCurveTo(p.x + width, p.y, p.x + width, p.y + radius);
+    ctx.lineTo(p.x + width, p.y + height - radius);
+    ctx.quadraticCurveTo(p.x + width, p.y + height, p.x + width - radius, p.y + height);
+    ctx.lineTo(p.x + radius, p.y + height);
+    ctx.quadraticCurveTo(p.x, p.y + height, p.x, p.y + height - radius);
+    ctx.lineTo(p.x, p.y + radius);
+    ctx.quadraticCurveTo(p.x, p.y, p.x + radius, p.y);
     ctx.closePath();
     if (stroke)
         ctx.stroke();
@@ -21,60 +22,38 @@ function DrawRoundedRect(ctx, x, y, width, height, radius, fill, stroke) {
         ctx.fill();
 }
 
-class Vector {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    get drawPos(scale, offset) {
-        return {
-            x: x * scale + offset.halfWidth,
-            y: -y * scale + offset.halfHeight
-        }
-    }
-
-    get type() {
-        return 1;
-    }
-}
-
 class Point {
-    constructor(x, y) {
+    x: number;
+    y: number;
+    type: number;
+    constructor(x: number, y: number, type: number = -1) {
         this.x = x;
         this.y = y;
+        this.type = type;
     }
 
-    Draw(ctx, scale, offset) {
+    Draw(ctx: CanvasRenderingContext2D, scale: number, offset: number) {
         ctx.globalAlpha = 1;
         ctx.fillStyle = '#757575';
-        DrawRoundedRect(pos.draw.x - 30, pos.draw.y + 15, 60, 30, 7, true, false);
+        var drawPos = this.GetDrawPos(scale, offset);
+        DrawRoundedRect(ctx, drawPos, 60, 30, 7, true, false);
     }
 
-    GetDraw(scale, offset) {
-        return {
-            x: x * scale + offset.halfWidth,
-            y: -y * scale + offset.halfHeight
-        }
-    }
-
-    get type() {
-        return 0;
+    GetDrawPos(scale: number, offset) {
+        return new Point(this.x * scale + offset.halfWidth, -this.y * scale + offset.halfHeight);
     }
 }
 
 class Polygon {
+    index: number;
+    points: Point[];
     constructor(index) {
         this.index = index;
         this.points = [];
     }
 
-    AddPoint(point) {
-        this.points.push(point);
-    }
-
-    AddPoint(x, y) {
-        this.points.push({ "x": x, "y": y });
+    AddPoint(x: number, y: number, type: number) {
+        this.points.push(new Point(x, y, type));
     }
 
     Draw(ctx, scale, offset) {
@@ -91,12 +70,12 @@ class Polygon {
         }
     }
 
-    get pointPosition(index) {
+    GetPointPosition(index) {
         var item = points[index];
         switch (item.type) {
             //point
             case 0:
-                
+
                 break;
             //vector
             case 1:

@@ -1,10 +1,11 @@
-"use strict";
+/// <reference path="Polygon.ts"/>
+/// <reference path="Bounds.ts"/>
 //table setup
-var table = document.getElementById("table");
+var table = document.getElementById("table") as HTMLTableElement;
 var nextIndex = 0;
 
 //canvas setup
-var canvas = document.getElementById("canvas");
+var canvas = document.getElementById("canvas") as HTMLCanvasElement;
 canvas.addEventListener('mousemove', SetMousePosition, false);
 canvas.addEventListener('mousedown', SaveIntersection, false);
 
@@ -12,7 +13,7 @@ Rebuild();
 
 //canvas vars
 var ctx = canvas.getContext("2d");
-var mouse = {};
+var mouse = { x: 0, y: 0 };
 var scale, maxSize, halfMaxSize, halfWidth, halfHeight, min, max;
 var center = { x: 0, y: 0 };
 var horizontalIntersect = true;
@@ -37,7 +38,7 @@ var inputX = document.getElementById('inputX');
 var inputY = document.getElementById('inputY');
 
 //polygons
-var polygonArray = []
+var polygonArray:Polygon[] = []
 
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
@@ -64,7 +65,7 @@ function Update() {
                 //If the vector is first point, add 0,0 point
                 if (i == 1)
                     array.push({ x: 0, y: 0 });
-                    
+
                 //Add position from previous element (Converting vector to point internally)
                 data.pos.x += array[array.length - 1].x;
                 data.pos.y += array[array.length - 1].y;
@@ -99,8 +100,9 @@ function Update() {
 
 //Prepared for future optimalizations
 function RecountUpdate() {
-     for (var i = 0; i < polygonArray.length; i++) {
-        polygonArray[i].Draw(ctx);
+    var bounds = Bounds.GetEmpty();
+    for (var i = 0; i < polygonArray.length; i++) {
+        var pBounds = polygonArray[i].bounds;
     }
     scale = maxSize / maxDist;
     center = { x: (max.x + min.x) / 2, y: (max.y + min.y) / 2 };
@@ -110,7 +112,7 @@ function RecountUpdate() {
 function DrawUpdate(scale) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "#000000";
-        DrawCross();
+    DrawCross();
     for (var i = 0; i < polygonArray.length; i++) {
         polygonArray[i].Draw(ctx);
     }
@@ -182,7 +184,7 @@ function CheckLineIntersection(line1, line2) {
         result.intersects = true;
         result.x = line1.start.x + (a * (line1.end.x - line1.start.x));
         result.y = line1.start.y + (a * (line1.end.y - line1.start.y));
-        result.draw = ScaleToDraw(result);
+        //result.draw = ScaleToDraw(result);
     }
 
     return result;
@@ -378,13 +380,13 @@ function AddPoint() {
     valid &= IsValid(inputY);
     if (!valid)
         return;
-        
-    if(polygonSelect.selectedIndex == 0) {
+
+    if (polygonSelect.selectedIndex == 0) {
         polygonArray.push(new Polygon());
         polygonSelect.add(GenerateOption("Polygon " + polygonArray.length));
         polygonSelect.selectedIndex = polygonArray.length + 1;
     }
-    
+
     var polygon = polygonArray[polygonSelect.selectedIndex - 2];
 
     var row = table.insertRow();
