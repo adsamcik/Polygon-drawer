@@ -25,10 +25,12 @@ var scaler = 0.48;
 
 //width or height of the canvas, which one is bigger
 var maxSize;
+//should save a nano second here and there
+var halfWidth, halfHeight;
 
 //settings
 var horizontalIntersect = true;
-var enableMouseLine = true;
+var enableMouseLine = false;
 var hideIntersections = false;
 var closePolygon = false;
 
@@ -136,7 +138,7 @@ function CheckLineIntersection(line1, line2) {
 }
 
 function GetMouseLine() {
-    if (horizontalIntersect)
+    /*if (horizontalIntersect)
         return {
             start: ScaleToOriginal({ x: halfWidth - halfMaxSize, y: mouse.y }),
             end: ScaleToOriginal({ x: halfWidth + halfMaxSize, y: mouse.y })
@@ -145,7 +147,7 @@ function GetMouseLine() {
         return {
             start: ScaleToOriginal({ x: mouse.x, y: halfHeight - halfMaxSize }),
             end: ScaleToOriginal({ x: mouse.x, y: halfHeight + halfMaxSize })
-        };
+        };*/
 }
 
 function IsMouseInRange(pos, radius) {
@@ -164,7 +166,6 @@ function Rebuild() {
     halfWidth = canvas.width / 2;
     halfHeight = canvas.height / 2;
     maxSize = canvas.width > canvas.height ? canvas.height : canvas.width;
-    halfMaxSize = maxSize / 2;
 }
 
 
@@ -175,12 +176,12 @@ function SetMousePosition(event) {
 };
 
 function SaveIntersection() {
-    if (enableMouseLine)
-        savedILines.push(GetMouseLine());
+   //if (enableMouseLine)
+        //savedILines.push(GetMouseLine());
 }
 
 function ClearAll() {
-    savedILines = [];
+    //savedILines = [];
 }
 
 function SetInputType(elem) {
