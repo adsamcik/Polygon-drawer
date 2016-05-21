@@ -1,5 +1,6 @@
 /// <reference path="Polygon.ts"/>
 /// <reference path="Bounds.ts"/>
+/// <reference path="Draw.ts"/>
 //table setup
 var table = document.getElementById("table") as HTMLTableElement;
 var nextIndex = 0;
@@ -29,73 +30,21 @@ var savedILines = [];
 var updateInt = setInterval(Update, 20);
 
 //Input vars
-var polygonSelect = document.getElementById('add-polygon');
+var polygonSelect:HTMLSelectElement = <HTMLSelectElement>document.getElementById('add-polygon');
 var selectedTab;
 var inputType;
 SetInputType(document.getElementById('input-type-select').children[0]);
 
-var inputX = document.getElementById('inputX');
-var inputY = document.getElementById('inputY');
+var inputX:HTMLInputElement = <HTMLInputElement>document.getElementById('inputX');
+var inputY:HTMLInputElement = <HTMLInputElement>document.getElementById('inputY');
 
 //polygons
 var polygonArray:Polygon[] = []
 
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
-    //Loads first row to min and max data
-    if (table.rows.length > 1) {
-        var firstRow = ParseData(table.rows[1]);
-        min = { x: firstRow.pos.x, y: firstRow.pos.y };
-        max = { x: firstRow.pos.x, y: firstRow.pos.y };
-    }
-    else
-        return;
-
-    //Canvas and var preparation
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "#000000";
-    var array = [];
-    for (var i = 1; i < table.rows.length; i++) {
-        //load info from table
-        var data = ParseData(table.rows[i]);
-
-        //Special type actions
-        switch (data.type) {
-            case "vector":
-                //If the vector is first point, add 0,0 point
-                if (i == 1)
-                    array.push({ x: 0, y: 0 });
-
-                //Add position from previous element (Converting vector to point internally)
-                data.pos.x += array[array.length - 1].x;
-                data.pos.y += array[array.length - 1].y;
-                break;
-        }
-
-        //check if its the highest or lowest yet
-        if (data.pos.x > max.x) max.x = data.pos.x;
-        else if (data.pos.x < min.x) min.x = data.pos.x;
-
-        if (data.pos.y > max.y) max.y = data.pos.y;
-        else if (data.pos.y < min.y) min.y = data.pos.y;
-
-        //insert item to array
-        array.push(data.pos);
-    }
-
-    //find the biggest value for scaling purpose
-    var maxDist = Math.abs(max.x);
-    maxDist = ReturnAbsBigger(maxDist, max.y);
-    maxDist = ReturnAbsBigger(maxDist, min.x);
-    maxDist = ReturnAbsBigger(maxDist, min.y);
-
-    if (array.length > 1) {
-        if (closePolygon) array.push(array[0]);
-        DrawLines(array);
-
-        if (!hideIntersections)
-            DrawIntersections(array);
-    }
+    var rcnt = RecountUpdate();
+    DrawUpdate(rcnt.scale, rcnt.offset);
 };
 
 //Prepared for future optimalizations
@@ -104,41 +53,37 @@ function RecountUpdate() {
     for (var i = 0; i < polygonArray.length; i++) {
         var pBounds = polygonArray[i].bounds;
     }
-    scale = maxSize / maxDist;
-    center = { x: (max.x + min.x) / 2, y: (max.y + min.y) / 2 };
+    
+    var maxDist = Math.abs(bounds.maX);
+    maxDist = ReturnAbsBigger(maxDist, bounds.maY);
+    maxDist = ReturnAbsBigger(maxDist, bounds.miX);
+    maxDist = ReturnAbsBigger(maxDist, bounds.miY);
+    return {
+        scale: maxSize / maxDist,
+        offset: new Offset((max.x + min.x) / 2, (max.y + min.y) / 2)
+    };
 }
 
 //Prepared for future optimalizations
-function DrawUpdate(scale) {
+function DrawUpdate(scale:number, offset:Offset) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "#000000";
-    DrawCross();
+    //DrawCross();
     for (var i = 0; i < polygonArray.length; i++) {
-        polygonArray[i].Draw(ctx);
+        polygonArray[i].Draw(ctx, scale, center);
     }
 }
 
-function DrawIntersections(array) {
+/*function DrawIntersections(array) {
     for (var i = 0; i < savedILines.length; i++)
         DrawIntersection(savedILines[i], array, true);
 
     if (enableMouseLine)
         DrawIntersection(GetMouseLine(), array, false);
-}
-
+}*/
 
 
 //OFTEN CALLED SUPPORT FUNCTIONS
-function ParseData(row) {
-    return {
-        type: row.cells[0].dataset.type,
-        pos: {
-            x: parseFloat(row.cells[1].children[0].value),
-            y: parseFloat(row.cells[2].children[0].value)
-        }
-    }
-}
-
 function ScaleToDraw(position) {
     var halfScale = scale * scaler;
     return {
@@ -212,112 +157,6 @@ function IsMouseInRange(pos, radius) {
     return distanceSqrd < radius * radius;
 }
 
-
-
-//CANVAS FUNCTIONS
-function DrawLines(array) {
-    ctx.strokeStyle = "#000";
-    ctx.lineWidth = 2;
-    for (var i = 0; i < array.length - 1; i++) {
-        //console.log("from (" + array[i].x + ", " + array[i].y + ") to (" + array[i+1].x + ", " + array[i+1].y + ")");
-        ctx.beginPath();
-        var pos = ScaleToDraw(array[i]);
-        //console.log(pos);
-        //console.log(array[i]);
-        ctx.moveTo(pos.x, pos.y);
-
-        pos = ScaleToDraw(array[i + 1]);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-    }
-}
-
-function DrawIntersection(iLine, array, enableMouseInteraction) {
-    var intersections = [];
-    //Go through every item in array and check if it intersects with mouse line
-    for (var i = 0; i < array.length - 1; i++) {
-        var line = {
-            start: array[i],
-            end: array[i + 1]
-        }
-
-        var result = CheckLineIntersection(iLine, line);
-
-        if (result.intersects)
-            intersections.push(result);
-    }
-    //draws base line for the intersections
-    ctx.beginPath();
-    ctx.lineWidth = 2;
-    ctx.setLineDash([10]);
-
-    var startScaled = ScaleToDraw(iLine.start);
-    ctx.moveTo(startScaled.x, startScaled.y);
-
-    var endScaled = ScaleToDraw(iLine.end);
-    ctx.lineTo(endScaled.x, endScaled.y);
-
-    ctx.closePath();
-    ctx.strokeStyle = '#9297B5';
-    ctx.stroke();
-    ctx.setLineDash([0]);
-    //draw every intersection point found
-    for (var i = 0; i < intersections.length; i++) {
-        if (enableMouseInteraction)
-            var mouseInRange = IsMouseInRange(intersections[i], 10);
-
-        var radius = mouseInRange ? 10 : 5;
-        if (mouseInRange) DrawCoords(intersections[i]);
-        ctx.beginPath();
-        ctx.arc(intersections[i].draw.x, intersections[i].draw.y, radius, 0, 2 * Math.PI, false);
-        ctx.closePath();
-        ctx.fillStyle = '#3F51B5';
-        ctx.fill();
-        ctx.lineWidth = 3;
-        ctx.stroke();
-    }
-}
-
-function DrawCoords(pos) {
-    ctx.globalAlpha = 0.9;
-    ctx.fillStyle = '#757575';
-    DrawRoundedRect(pos.draw.x - 30, pos.draw.y + 15, 60, 30, 7, true, false);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = '#ffffff';
-
-    ctx.font = "500 11px Roboto";
-
-    ctx.textAlign = 'center';
-    ctx.fillText("x: " + pos.x.toFixed(2), pos.draw.x, pos.draw.y + 27);
-    ctx.fillText("y: " + pos.y.toFixed(2), pos.draw.x, pos.draw.y + 40);
-};
-
-function DrawCross() {
-    ctx.strokeStyle = "#ccc";
-    ctx.lineWidth = 1;
-
-    ctx.beginPath();
-    ctx.moveTo(halfWidth, halfHeight - halfMaxSize);
-    ctx.lineTo(halfWidth, halfHeight + halfMaxSize);
-    ctx.stroke();
-    ctx.closePath();
-
-    ctx.beginPath();
-    ctx.moveTo(halfWidth - halfMaxSize, halfHeight);
-    ctx.lineTo(halfWidth + halfMaxSize, halfHeight);
-    ctx.stroke();
-    ctx.closePath();
-};
-
-function DrawPoint(pos) {
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = '#757575';
-    DrawRoundedRect(pos.draw.x - 30, pos.draw.y + 15, 60, 30, 7, true, false);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = '#ffffff';
-}
-
-
 //EVENTUALLY CALLED FUNCTIONS
 function Rebuild() {
     canvas.width = window.innerWidth;
@@ -359,7 +198,7 @@ function CheckKey(event) {
     return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
 };
 
-function IsValid(inputField) {
+function IsValid(inputField:HTMLInputElement) {
     if (inputField.value.trim() == "") {
         inputField.className += ' invalid';
         return false;
@@ -376,13 +215,16 @@ function GenerateOption(name) {
 };
 
 function AddPoint() {
-    var valid = IsValid(inputX);
-    valid &= IsValid(inputY);
-    if (!valid)
+    if (!(IsValid(<HTMLInputElement>inputX) && IsValid(<HTMLInputElement>inputY)))
         return;
 
     if (polygonSelect.selectedIndex == 0) {
-        polygonArray.push(new Polygon());
+        var row = table.insertRow();
+        var cell = row.insertCell(0);
+        cell.colSpan = 4;
+        cell.innerText = "polygon " + polygonArray.length;
+        polygonArray.push(new Polygon(ctx, row));
+        
         polygonSelect.add(GenerateOption("Polygon " + polygonArray.length));
         polygonSelect.selectedIndex = polygonArray.length + 1;
     }
@@ -390,7 +232,6 @@ function AddPoint() {
     var polygon = polygonArray[polygonSelect.selectedIndex - 2];
 
     var row = table.insertRow();
-    row.dataset.id = ++nextIndex;
 
     //insert cells
     var cell1 = row.insertCell(0);
@@ -400,22 +241,12 @@ function AddPoint() {
     //fill cells
     cell1.innerHTML = "<img src='icons/" + inputType + ".svg' width='24'>";
     cell1.className = 'cellCollapsed';
-    cell1.dataset.type = inputType;
     cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
     cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
     cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'><img src='icons/remove.svg' width='24px'></button>";
 
     inputX.value = "";
     inputY.value = "";
-}
-
-function RemovePoint(index) {
-    for (var i = 0; i < table.rows.length; i++) {
-        if (table.rows[i].dataset.id == index) {
-            table.deleteRow(i);
-            break;
-        }
-    }
 }
 
 //initialization

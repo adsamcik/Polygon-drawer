@@ -1,55 +1,79 @@
-/// <reference path="Bounds.ts"/>
+class Offset {
+    v: number;
+    h: number;
 
-function DrawRoundedRect(ctx: CanvasRenderingContext2D, p: Point, width, height, radius, fill, stroke) {
-    if (typeof stroke == "undefined")
-        stroke = true;
-    if (typeof radius === "undefined")
-        radius = 5;
-    ctx.beginPath();
-    ctx.moveTo(p.x + radius, p.y);
-    ctx.lineTo(p.x + width - radius, p.y);
-    ctx.quadraticCurveTo(p.x + width, p.y, p.x + width, p.y + radius);
-    ctx.lineTo(p.x + width, p.y + height - radius);
-    ctx.quadraticCurveTo(p.x + width, p.y + height, p.x + width - radius, p.y + height);
-    ctx.lineTo(p.x + radius, p.y + height);
-    ctx.quadraticCurveTo(p.x, p.y + height, p.x, p.y + height - radius);
-    ctx.lineTo(p.x, p.y + radius);
-    ctx.quadraticCurveTo(p.x, p.y, p.x + radius, p.y);
-    ctx.closePath();
-    if (stroke)
-        ctx.stroke();
-    if (fill)
-        ctx.fill();
+    constructor(horizontal: number, vertical: number) {
+        this.v = vertical;
+        this.h = horizontal;
+    }
+}
+
+class Coord {
+    x: number;
+    y: number;
+
+    constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+    }
+
+    ScaleCoord(scale: number, offset: Offset) {
+        return new ScaledCoord(this.x, this.y, scale, offset);
+    }
+}
+
+class ScaledCoord extends Coord {
+    scaledX: number;
+    scaledY: number;
+
+    constructor(x: number, y: number, scale: number, offset: Offset) {
+        super(x, y);
+        this.scaledX = x * scale + offset.h;
+        this.scaledY = y * scale + offset.v;
+    }
+
+    get drawCoords() {
+        return new Coord(this.scaledX, this.scaledY);
+    }
+
+    get origCoords() {
+        return new Coord(this.x, this.y);
+    }
 }
 
 class Point {
-    x: number;
-    y: number;
+    coord: Coord;
     type: number;
+
     constructor(x: number, y: number, type: number = -1) {
-        this.x = x;
-        this.y = y;
+        this.coord = new Coord(x, y);
         this.type = type;
     }
 
-    Draw(ctx: CanvasRenderingContext2D, scale: number, offset: number) {
+    Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
         ctx.globalAlpha = 1;
         ctx.fillStyle = '#757575';
-        var drawPos = this.GetDrawPos(scale, offset);
-        DrawRoundedRect(ctx, drawPos, 60, 30, 7, true, false);
+        DrawRoundedRect(ctx, this.coord.ScaleCoord(scale, offset).drawCoords, 60, 30, 7, true, false);
     }
 
-    GetDrawPos(scale: number, offset) {
-        return new Point(this.x * scale + offset.halfWidth, -this.y * scale + offset.halfHeight);
+    get x() {
+        return this.coord.x;
+    }
+
+    get y() {
+        return this.coord.y;
     }
 }
 
 class Polygon {
-    index: number;
+    row: HTMLTableRowElement;
     points: Point[];
-    constructor(index) {
-        this.index = index;
+    ctx: CanvasRenderingContext2D;
+
+    constructor(ctx: CanvasRenderingContext2D, tableRow: HTMLTableRowElement) {
+        this.row = tableRow;
         this.points = [];
+        this.ctx = ctx;
     }
 
     AddPoint(x: number, y: number, type: number) {
@@ -64,7 +88,7 @@ class Polygon {
             ctx.beginPath();
             var pos = points[i].GetDrawX(scale, offset);
             ctx.moveTo(pos.x, pos.y);
-            pos = array[i + 1].GetDrawX(scale, offset);
+            pos = points[i + 1].GetDrawX(scale, offset);
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
         }
