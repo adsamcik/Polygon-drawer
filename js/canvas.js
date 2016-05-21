@@ -39,31 +39,6 @@ var inputY = document.getElementById('inputY');
 //polygons
 var polygonArray = []
 
-class Polygon {
-  constructor(index) {
-      this.index = index;
-      this.points = [];
-  }
-  
-  AddPoint(point) {
-      this.points.push(point);
-  }
-  
-  AddPoint(x,y) {
-      this.points.push({"x":x,"y":y});
-  }
-  
-  get points() {
-      return this.points;
-  }
-}
-
-function GenerateOption(name) {
-    var option = document.createElement("option");
-    option.text = name;
-    return option;
-}
-
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
     //Loads first row to min and max data
@@ -240,8 +215,8 @@ function DrawLines(array) {
         //console.log("from (" + array[i].x + ", " + array[i].y + ") to (" + array[i+1].x + ", " + array[i+1].y + ")");
         ctx.beginPath();
         var pos = ScaleToDraw(array[i]);
-        console.log(pos);
-        console.log(array[i]);
+        //console.log(pos);
+        //console.log(array[i]);
         ctx.moveTo(pos.x, pos.y);
 
         pos = ScaleToDraw(array[i + 1]);
@@ -309,32 +284,6 @@ function DrawCoords(pos) {
     ctx.fillText("x: " + pos.x.toFixed(2), pos.draw.x, pos.draw.y + 27);
     ctx.fillText("y: " + pos.y.toFixed(2), pos.draw.x, pos.draw.y + 40);
 };
-
-function DrawRoundedRect(x, y, width, height, radius, fill, stroke) {
-    if (typeof stroke == "undefined") {
-        stroke = true;
-    }
-    if (typeof radius === "undefined") {
-        radius = 5;
-    }
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
-    if (stroke) {
-        ctx.stroke();
-    }
-    if (fill) {
-        ctx.fill();
-    }
-}
 
 function DrawCross() {
     ctx.strokeStyle = "#ccc";
@@ -411,13 +360,27 @@ function IsValid(inputField) {
         inputField.className = inputX.className.replace(' invalid', '');
         return true;
     }
-}
+};
+
+function GenerateOption(name) {
+    var option = document.createElement("option");
+    option.text = name;
+    return option;
+};
 
 function AddPoint() {
     var valid = IsValid(inputX);
     valid &= IsValid(inputY);
     if (!valid)
         return;
+        
+    if(polygonSelect.selectedIndex == 0) {
+        polygonArray.push(new Polygon());
+        polygonSelect.add(GenerateOption("Polygon " + polygonArray.length));
+        polygonSelect.selectedIndex = polygonArray.length + 1;
+    }
+    
+    var polygon = polygonArray[polygonSelect.selectedIndex - 2];
 
     var row = table.insertRow();
     row.dataset.id = ++nextIndex;
