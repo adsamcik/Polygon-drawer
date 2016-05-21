@@ -1,6 +1,7 @@
 /// <reference path="Polygon.ts"/>
 /// <reference path="Bounds.ts"/>
 /// <reference path="Draw.ts"/>
+
 //table setup
 var table = document.getElementById("table") as HTMLTableElement;
 var nextIndex = 0;
