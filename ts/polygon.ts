@@ -9,7 +9,18 @@ class Polygon extends Shape {
     }
 
     AddPoint(x: number, y: number, isVector: boolean) {
-        this.points.push(isVector ? new Vector(x, y) : new Coord(x, y));
+        //Add point/vector if vector get previous coord, if no coord is found, insert zero
+        this.points.push(
+            isVector ?
+                new Vector(
+                    x,
+                    y,
+                    this.points.length > 0 ?
+                        this.points[this.points.length - 1] :
+                        Coord.zero
+                ) :
+                new Coord(x, y)
+        );
     }
 
     Draw(ctx, scale, offset) {
@@ -28,15 +39,6 @@ class Polygon extends Shape {
 
     GetPointPosition(index) {
         var item = this.points[index];
-        switch (item.type) {
-            //point
-            case 0:
-
-                break;
-            //vector
-            case 1:
-                break;
-        }
     }
 
     get bounds() {
