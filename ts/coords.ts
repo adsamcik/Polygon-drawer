@@ -86,4 +86,8 @@ class Vector extends Coord {
     get y() {
         return this.base.y + this.cy;
     }
+    
+    get dir() {
+        return new Coord(this.cx, this.cy);
+    }
 }
