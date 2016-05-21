@@ -61,7 +61,7 @@ function RecountUpdate() {
     maxDist = ReturnAbsBigger(maxDist, bounds.miY);
     return {
         scale: maxSize / maxDist,
-        offset: new Offset((max.x + min.x) / 2, (max.y + min.y) / 2)
+        offset: new Offset((bounds.maX + bounds.miX) / 2, (bounds.maY + bounds.miY) / 2)
     };
 }
 
