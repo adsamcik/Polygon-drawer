@@ -43,27 +43,47 @@ class ScaledCoord extends Coord {
 }
 
 class Coord {
-    x: number;
-    y: number;
+    protected cx: number;
+    protected cy: number;
 
     constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
+        this.cx = x;
+        this.cy = y;
     }
 
     ScaleCoord(scale: number, offset: Offset) {
         return new ScaledCoord(this.x, this.y, scale, offset);
     }
+
+    static get zero() {
+        return new Coord(0, 0);
+    }
+    
+    get x() {
+        return this.cx;
+    }
+    
+    get y() {
+        return this.cy;
+    }
 }
 
 class Vector extends Coord {
-    base:Coord;
-    constructor(x: number, y: number, base:Coord) {
+    base: Coord;
+    constructor(x: number, y: number, base: Coord) {
         super(x, y);
         this.base = base;
     }
 
     ScaleCoord(scale: number, offset: Offset) {
         return new ScaledVector(this.x, this.y, scale, offset);
+    }
+
+    get x() {
+        return this.base.x + this.cx;
+    }
+    
+    get y() {
+        return this.base.y + this.cy;
     }
 }
