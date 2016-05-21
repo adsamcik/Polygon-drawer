@@ -1,6 +1,8 @@
 /// <reference path="polygon.ts"/>
 /// <reference path="bounds.ts"/>
 /// <reference path="draw.ts"/>
+/// <reference path="shape.ts"/>
+/// <reference path="coords.ts"/>
 
 //table setup
 var table = document.getElementById("table") as HTMLTableElement;
@@ -11,23 +13,28 @@ var canvas = document.getElementById("canvas") as HTMLCanvasElement;
 canvas.addEventListener('mousemove', SetMousePosition, false);
 canvas.addEventListener('mousedown', SaveIntersection, false);
 
-Rebuild();
-
 //canvas vars
 var ctx = canvas.getContext("2d");
-var mouse = { x: 0, y: 0 };
-var scale, maxSize, halfMaxSize, halfWidth, halfHeight, min, max;
-var center = { x: 0, y: 0 };
+var mouse:Coord = new Coord(0,0);
+
+//center of the screen
+var center:Offset = new Offset(0,0);
+
+//no idea what it is, but it looks important
+var scaler = 0.48;
+
+//width or height of the canvas, which one is bigger
+var maxSize;
+
+//settings
 var horizontalIntersect = true;
 var enableMouseLine = true;
 var hideIntersections = false;
 var closePolygon = false;
-var scaler = 0.48;
 
-var points = [];
-var savedILines = [];
+Rebuild();
 
-//set for 50fps
+//update 50 times per second
 var updateInt = setInterval(Update, 20);
 
 //Input vars
@@ -39,8 +46,9 @@ SetInputType(document.getElementById('input-type-select').children[0]);
 var inputX:HTMLInputElement = <HTMLInputElement>document.getElementById('inputX');
 var inputY:HTMLInputElement = <HTMLInputElement>document.getElementById('inputY');
 
-//polygons
-var polygonArray:Polygon[] = []
+//Object holders
+var polygonArray:Polygon[] = [];
+var pointArray:Point[] = [];
 
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
@@ -51,9 +59,8 @@ function Update() {
 //Prepared for future optimalizations
 function RecountUpdate() {
     var bounds = Bounds.GetEmpty();
-    for (var i = 0; i < polygonArray.length; i++) {
+    for (var i = 0; i < polygonArray.length; i++)
         var pBounds = polygonArray[i].bounds;
-    }
     
     var maxDist = Math.abs(bounds.maX);
     maxDist = ReturnAbsBigger(maxDist, bounds.maY);
@@ -85,19 +92,11 @@ function DrawUpdate(scale:number, offset:Offset) {
 
 
 //OFTEN CALLED SUPPORT FUNCTIONS
-function ScaleToDraw(position) {
+function ScaleToOriginal(scale:number, pos:Coord, offset:Offset) {
     var halfScale = scale * scaler;
     return {
-        x: (position.x) * halfScale + halfWidth,
-        y: -(position.y) * halfScale + halfHeight
-    }
-}
-
-function ScaleToOriginal(pos) {
-    var halfScale = scale * scaler;
-    return {
-        x: ((pos.x - halfWidth) / halfScale),
-        y: -((pos.y - halfHeight) / halfScale)
+        x: ((pos.x - offset.h) / halfScale),
+        y: -((pos.y - offset.v) / halfScale)
     };
 }
 
