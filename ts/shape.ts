@@ -1,3 +1,12 @@
+class Shape {
+    row: HTMLTableRowElement;
+    ctx: CanvasRenderingContext2D;
+    constructor(ctx: CanvasRenderingContext2D, tableRow: HTMLTableRowElement) {
+        this.ctx = ctx;
+        this.row = tableRow;
+    }
+}
+
 class Point extends Shape {
     coord: Coord;
     type: number;
@@ -20,14 +29,5 @@ class Point extends Shape {
 
     get y() {
         return this.coord.y;
-    }
-}
-
-class Shape {
-    row: HTMLTableRowElement;
-    ctx: CanvasRenderingContext2D;
-    constructor(ctx: CanvasRenderingContext2D, tableRow: HTMLTableRowElement) {
-        this.ctx = ctx;
-        this.row = tableRow;
     }
 }

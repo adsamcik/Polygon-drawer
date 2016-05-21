@@ -8,40 +8,6 @@ class Offset {
     }
 }
 
-//todo
-class ScaledVector extends ScaledCoord {
-    constructor(x: number, y: number, scale: number, offset: Offset) {
-        super(x, y, scale, offset);
-    }
-
-    get drawCoords() {
-        return new Coord(this.scaledX, this.scaledY);
-    }
-
-    get origCoords() {
-        return new Coord(this.x, this.y);
-    }
-}
-
-class ScaledCoord extends Coord {
-    scaledX: number;
-    scaledY: number;
-
-    constructor(x: number, y: number, scale: number, offset: Offset) {
-        super(x, y);
-        this.scaledX = x * scale + offset.h;
-        this.scaledY = y * scale + offset.v;
-    }
-
-    get drawCoords() {
-        return new Coord(this.scaledX, this.scaledY);
-    }
-
-    get origCoords() {
-        return new Coord(this.x, this.y);
-    }
-}
-
 class Coord {
     protected cx: number;
     protected cy: number;
@@ -89,5 +55,40 @@ class Vector extends Coord {
     
     get dir() {
         return new Coord(this.cx, this.cy);
+    }
+}
+
+
+class ScaledCoord extends Coord {
+    scaledX: number;
+    scaledY: number;
+
+    constructor(x: number, y: number, scale: number, offset: Offset) {
+        super(x, y);
+        this.scaledX = x * scale + offset.h;
+        this.scaledY = y * scale + offset.v;
+    }
+
+    get drawCoords() {
+        return new Coord(this.scaledX, this.scaledY);
+    }
+
+    get origCoords() {
+        return new Coord(this.x, this.y);
+    }
+}
+
+//todo
+class ScaledVector extends ScaledCoord {
+    constructor(x: number, y: number, scale: number, offset: Offset) {
+        super(x, y, scale, offset);
+    }
+
+    get drawCoords() {
+        return new Coord(this.scaledX, this.scaledY);
+    }
+
+    get origCoords() {
+        return new Coord(this.x, this.y);
     }
 }

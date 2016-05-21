@@ -1,8 +1,8 @@
-/// <reference path="polygon.ts"/>
 /// <reference path="bounds.ts"/>
-/// <reference path="draw.ts"/>
-/// <reference path="shape.ts"/>
 /// <reference path="coords.ts"/>
+/// <reference path="shape.ts"/>
+/// <reference path="polygon.ts"/>
+/// <reference path="draw.ts"/>
 
 //table setup
 var table = document.getElementById("table") as HTMLTableElement;
