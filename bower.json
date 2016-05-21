@@ -1,0 +1,21 @@
+{
+  "name": "Polygon-drawer",
+  "homepage": "https://github.com/adsamcik/Polygon-drawer",
+  "authors": [
+    "adsamcik <adsamcik@users.noreply.github.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "material-design-lite": "~1.1.3"
+  }
+}
