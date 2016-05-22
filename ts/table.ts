@@ -3,13 +3,12 @@ class TableElement {
     table: HTMLTableElement;
     value: Shape;
 
-    constructor(table: HTMLTableElement, row: HTMLTableRowElement, value: Shape) {
-        this.row = row;
+    constructor(table: HTMLTableElement, value: Shape) {
         this.table = table;
         this.value = value;
 
-        var row = table.insertRow();
-        var cell = row.insertCell(0);
+        this.row = table.insertRow();
+        var cell = this.row.insertCell(0);
         cell.colSpan = 4;
         cell.innerText = value.constructor.name;
         polygonSelect.add(GenerateOption("Polygon"));
@@ -35,20 +34,29 @@ class TableElement {
     Remove(index: number = -1) {
         if (index == -1) {
             if (this.value instanceof Polygon) {
-                for (var i = (<Polygon>this.value).points.length; i >= 0; i--) {
+                for (var i = (<Polygon>this.value).points.length; i >= 0; i--)
                     this.table.deleteRow(this.row.rowIndex + i);
-                }
             }
             else
                 this.table.deleteRow(this.row.rowIndex);
         }
-        else {
-            this.RmFromTable(index);
+        else
+            this.table.deleteRow(index);
+    }
+
+    RemoveRow(rowIndex: number) {
+        var index = (rowIndex - this.row.rowIndex) - 1;
+        if (index < 0 || (index > 0 && !(this.value instanceof Polygon))) {
+            console.error("Row does not belong to element " + this.value.constructor.name + " on index " + this.row.rowIndex);
+            return;
         }
+        console.log(index + "  " + rowIndex + " - " + this.row.rowIndex);
+        (<Polygon>this.value).RemovePoint(index);
+        this.table.deleteRow(rowIndex);
     }
 
     private AddToTable(index: number, c: Coord) {
-        var row = this.table.insertRow(this.row.rowIndex + 1 + index);
+        var row = this.table.insertRow(this.row.rowIndex + index);
 
         //insert cells
         var cell1 = row.insertCell(0);
@@ -64,12 +72,8 @@ class TableElement {
         var btn = <HTMLButtonElement>cell4.firstChild;
         var _this = this;
         btn.addEventListener("click", function (event) {
-            _this.RmFromTable((<HTMLTableRowElement>(<HTMLButtonElement>event.target).parentElement.parentElement).rowIndex);
+            _this.RemoveRow((<HTMLTableRowElement>(<HTMLButtonElement>event.target).parentElement.parentElement).rowIndex);
         }, false);
-    }
-
-    RmFromTable(index: number) {
-        this.table.deleteRow(this.row.rowIndex + 1 + index);
     }
 }
 
@@ -82,7 +86,7 @@ class Table {
     }
 
     AddElement(s: Shape) {
-        return this.elements.push(new TableElement(this.t, this.t.insertRow(), s)) - 1;
+        return this.elements.push(new TableElement(this.t, s)) - 1;
     }
 
     AddValue(index: number, s: Coord) {

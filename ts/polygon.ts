@@ -21,6 +21,10 @@ class Polygon extends Shape {
                 new Coord(x, y)
         );
     }
+    
+    RemovePoint(index:number) {
+        this.points.splice(index, 1);
+    }
 
     Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
         ctx.strokeStyle = "#000";
@@ -29,7 +33,6 @@ class Polygon extends Shape {
             //console.log("from (" + this.points[i].x + ", " + this.points[i].y + ") to (" + this.points[i+1].x + ", " + this.points[i+1].y + ")");
             ctx.beginPath();
             var pos = this.points[i].ScaleCoord(scale, offset);
-            console.log(pos);
             ctx.moveTo(pos.scaledX, pos.scaledY);
             pos = this.points[i + 1].ScaleCoord(scale, offset);
             ctx.lineTo(pos.scaledX, pos.scaledY);
