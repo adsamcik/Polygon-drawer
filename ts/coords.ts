@@ -57,8 +57,16 @@ class Vector extends Coord {
         return this.base.x + this.cx;
     }
     
+    set x(val:number) {
+        this.cx = val;
+    }
+    
     get y() {
         return this.base.y + this.cy;
+    }
+    
+    set y(val:number) {
+        this.cy = val;
     }
     
     get dir() {
