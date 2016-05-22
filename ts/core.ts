@@ -16,18 +16,18 @@ canvas.addEventListener('mousedown', SaveIntersection, false);
 
 //canvas vars
 var ctx = canvas.getContext("2d");
-var mouse:Coord = new Coord(0,0);
+var mouse: Coord = new Coord(0, 0);
 
 //center of the screen
-var center:Offset = new Offset(0,0);
+var center: Offset = new Offset(0, 0);
 
 //no idea what it is, but it looks important
 var scaler = 0.48;
 
 //width or height of the canvas, which one is bigger
-var maxSize;
+var maxSize:number;
 //should save a nano second here and there
-var halfWidth, halfHeight;
+var halfWidth:number, halfHeight:number;
 
 //settings
 var horizontalIntersect = true;
@@ -41,17 +41,17 @@ Rebuild();
 var updateInt = setInterval(Update, 20);
 
 //Input vars
-var polygonSelect:HTMLSelectElement = <HTMLSelectElement>document.getElementById('add-polygon');
+var polygonSelect: HTMLSelectElement = <HTMLSelectElement>document.getElementById('add-polygon');
 var selectedTab;
-var inputType;
+var inputType:string;
 SetInputType(document.getElementById('input-type-select').children[0]);
 
-var inputX:HTMLInputElement = <HTMLInputElement>document.getElementById('inputX');
-var inputY:HTMLInputElement = <HTMLInputElement>document.getElementById('inputY');
+var inputX: HTMLInputElement = <HTMLInputElement>document.getElementById('inputX');
+var inputY: HTMLInputElement = <HTMLInputElement>document.getElementById('inputY');
 
 //Object holders
-var polygonArray:Polygon[] = [];
-var pointArray:Point[] = [];
+var polygonArray: Polygon[] = [];
+var pointArray: Point[] = [];
 
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
@@ -64,7 +64,7 @@ function RecountUpdate() {
     var bounds = Bounds.GetEmpty();
     for (var i = 0; i < polygonArray.length; i++)
         var pBounds = polygonArray[i].bounds;
-    
+
     var maxDist = Math.abs(bounds.maX);
     maxDist = ReturnAbsBigger(maxDist, bounds.maY);
     maxDist = ReturnAbsBigger(maxDist, bounds.miX);
@@ -76,13 +76,12 @@ function RecountUpdate() {
 }
 
 //Prepared for future optimalizations
-function DrawUpdate(scale:number, offset:Offset) {
+function DrawUpdate(scale: number, offset: Offset) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "#000000";
     //DrawCross();
-    for (var i = 0; i < polygonArray.length; i++) {
+    for (var i = 0; i < polygonArray.length; i++)
         polygonArray[i].Draw(ctx, scale, center);
-    }
 }
 
 /*function DrawIntersections(array) {
@@ -95,7 +94,7 @@ function DrawUpdate(scale:number, offset:Offset) {
 
 
 //OFTEN CALLED SUPPORT FUNCTIONS
-function ScaleToOriginal(scale:number, pos:Coord, offset:Offset) {
+function ScaleToOriginal(scale: number, pos: Coord, offset: Offset) {
     var halfScale = scale * scaler;
     return {
         x: ((pos.x - offset.h) / halfScale),
@@ -177,16 +176,16 @@ function SetMousePosition(event) {
 };
 
 function SaveIntersection() {
-   //if (enableMouseLine)
-        //savedILines.push(GetMouseLine());
+    //if (enableMouseLine)
+    //savedILines.push(GetMouseLine());
 }
 
 function ClearAll() {
     //savedILines = [];
 }
 
-function SetInputType(elem) {
-    inputType = elem.innerHTML;
+function SetInputType(elem:Element) {
+    inputType = elem.innerHTML.toLowerCase();
     if (selectedTab != null)
         selectedTab.className = selectedTab.className.replace(' is-active', '').trim();
 
@@ -200,7 +199,7 @@ function CheckKey(event) {
     return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
 };
 
-function IsValid(inputField:HTMLInputElement) {
+function IsValid(inputField: HTMLInputElement) {
     if (inputField.value.trim() == "") {
         inputField.className += ' invalid';
         return false;
@@ -226,26 +225,42 @@ function AddPoint() {
         cell.colSpan = 4;
         cell.innerText = "polygon " + polygonArray.length;
         polygonArray.push(new Polygon(ctx, row));
-        
+
         polygonSelect.add(GenerateOption("Polygon " + polygonArray.length));
         polygonSelect.selectedIndex = polygonArray.length + 1;
     }
 
-    var polygon = polygonArray[polygonSelect.selectedIndex - 2];
+    if (polygonSelect.selectedIndex == 1) {
+        var row = table.insertRow();
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
 
-    var row = table.insertRow();
+        cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
+        cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
+        cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'><img src='icons/remove.svg' width='24px'></button>";
 
-    //insert cells
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
-    //fill cells
-    cell1.innerHTML = "<img src='icons/" + inputType + ".svg' width='24'>";
-    cell1.className = 'cellCollapsed';
-    cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
-    cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
-    cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'><img src='icons/remove.svg' width='24px'></button>";
+        pointArray.push(new Point(ctx, row, +inputX.value, +inputY.value));
+    }
+    else {
+        var polygon = polygonArray[polygonSelect.selectedIndex - 2];
+        var row = table.insertRow();
+
+        //insert cells
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        //fill cells
+        cell1.innerHTML = "<img src='icons/" + inputType + ".svg' width='24'>";
+        cell1.className = 'cellCollapsed';
+        cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
+        cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
+        cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'><img src='icons/remove.svg' width='24px'></button>";
+
+        polygon.AddPoint(+inputX.value, +inputY.value, inputType == "vector");
+    }
 
     inputX.value = "";
     inputY.value = "";

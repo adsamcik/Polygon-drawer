@@ -23,10 +23,10 @@ class Polygon extends Shape {
         );
     }
 
-    Draw(ctx, scale, offset) {
+    Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
         ctx.strokeStyle = "#000";
         ctx.lineWidth = 2;
-        for (var i = 0; i < this.points.length; i++) {
+        for (var i = 0; i < this.points.length - 1; i++) {
             //console.log("from (" + array[i].x + ", " + array[i].y + ") to (" + array[i+1].x + ", " + array[i+1].y + ")");
             ctx.beginPath();
             var pos = this.points[i].ScaleCoord(scale, offset);
@@ -37,8 +37,8 @@ class Polygon extends Shape {
         }
     }
 
-    GetPointPosition(index) {
-        var item = this.points[index];
+    GetPoint(index: number) {
+        return this.points[index];
     }
 
     get bounds() {

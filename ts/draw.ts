@@ -20,7 +20,7 @@ function DrawRoundedRect(ctx: CanvasRenderingContext2D, p: Coord, width, height,
         ctx.fill();
 }
 
-function DrawIntersection(ctx, iLine, array, enableMouseInteraction) {
+/*function DrawIntersection(ctx, iLine, array, enableMouseInteraction) {
     var intersections = [];
     //Go through every item in array and check if it intersects with mouse line
     for (var i = 0; i < array.length - 1; i++) {
@@ -64,7 +64,7 @@ function DrawIntersection(ctx, iLine, array, enableMouseInteraction) {
         ctx.lineWidth = 3;
         ctx.stroke();
     }
-}
+}*/
 
 function DrawCoords(ctx:CanvasRenderingContext2D, coord:ScaledCoord) {
     ctx.globalAlpha = 0.9;
@@ -80,19 +80,19 @@ function DrawCoords(ctx:CanvasRenderingContext2D, coord:ScaledCoord) {
     ctx.fillText("y: " + coord.y, coord.scaledX, coord.scaledY + 40);
 };
 
-function DrawCross(coord:Coord, bounds:Bounds) {
+function DrawCross(o:Offset, halfMaxSize:number) {
     ctx.strokeStyle = "#ccc";
     ctx.lineWidth = 1;
 
     ctx.beginPath();
-    ctx.moveTo(halfWidth, halfHeight - halfMaxSize);
-    ctx.lineTo(halfWidth, halfHeight + halfMaxSize);
+    ctx.moveTo(o.h, o.v - halfMaxSize);
+    ctx.lineTo(o.h, o.v + halfMaxSize);
     ctx.stroke();
     ctx.closePath();
 
     ctx.beginPath();
-    ctx.moveTo(halfWidth - halfMaxSize, halfHeight);
-    ctx.lineTo(halfWidth + halfMaxSize, halfHeight);
+    ctx.moveTo(o.h - halfMaxSize, o.v);
+    ctx.lineTo(o.h + halfMaxSize, o.v);
     ctx.stroke();
     ctx.closePath();
 };
