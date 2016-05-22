@@ -19,13 +19,17 @@ class TableElement {
                 this.AddToTable(i, p.GetPoint(i));
             }
         }
+        else {
+            //ToDo Make this more verbose
+            this.AddToTable(0, (<Point>this.value).coord)
+        }
     }
 
     Add(item: Coord) {
         if (this.value instanceof Polygon) {
             var p = (<Polygon>this.value);
             p.AddPoint(item.x, item.y, item instanceof Vector);
-            this.AddToTable(p.points.length, p.GetPoint());
+            this.AddToTable(p.points.length-1, p.GetPoint());
         }
         else
             console.error("Element " + item.constructor.name + " on row index " + this.row.rowIndex + " does not support adding items");
@@ -64,7 +68,7 @@ class TableElement {
     }
 
     private AddToTable(index: number, c: Coord) {
-        var row = this.table.t.insertRow(this.row.rowIndex + index);
+        var row = this.table.t.insertRow(this.row.rowIndex + index + 1);
 
         //insert cells
         var cell1 = row.insertCell(0);
