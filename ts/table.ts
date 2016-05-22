@@ -12,8 +12,7 @@ class TableElement {
         var cell = row.insertCell(0);
         cell.colSpan = 4;
         cell.innerText = value.constructor.name;
-        polygonSelect.add(GenerateOption("Polygon " + polygonArray.length));
-        polygonSelect.selectedIndex = polygonArray.length + 1;
+        polygonSelect.add(GenerateOption("Polygon"));
 
         if (value instanceof Polygon) {
             var p = <Polygon>value;

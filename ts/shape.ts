@@ -3,13 +3,20 @@ class Shape {
     constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
     }
+
+    get bounds() {
+        return new Bounds(0,0,0,0);
+    }
+
+    Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
+    }
 }
 
 class Point extends Shape {
     coord: Coord;
     type: number;
 
-    constructor(ctx: CanvasRenderingContext2D, coord:Coord, type: number = -1) {
+    constructor(ctx: CanvasRenderingContext2D, coord: Coord, type: number = -1) {
         super(ctx);
         this.coord = coord;
         this.type = type;
@@ -27,5 +34,9 @@ class Point extends Shape {
 
     get y() {
         return this.coord.y;
+    }
+
+    get bounds() {
+        return new Bounds(this.x, this.y, this.x, this.y);
     }
 }

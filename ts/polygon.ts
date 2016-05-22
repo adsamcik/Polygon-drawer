@@ -26,9 +26,10 @@ class Polygon extends Shape {
         ctx.strokeStyle = "#000";
         ctx.lineWidth = 2;
         for (var i = 0; i < this.points.length - 1; i++) {
-            //console.log("from (" + array[i].x + ", " + array[i].y + ") to (" + array[i+1].x + ", " + array[i+1].y + ")");
+            //console.log("from (" + this.points[i].x + ", " + this.points[i].y + ") to (" + this.points[i+1].x + ", " + this.points[i+1].y + ")");
             ctx.beginPath();
             var pos = this.points[i].ScaleCoord(scale, offset);
+            console.log(pos);
             ctx.moveTo(pos.scaledX, pos.scaledY);
             pos = this.points[i + 1].ScaleCoord(scale, offset);
             ctx.lineTo(pos.scaledX, pos.scaledY);
@@ -55,11 +56,6 @@ class Polygon extends Shape {
             if (point.y > maY)
                 maY = point.y;
         }
-        return {
-            miX: miX,
-            miY: miY,
-            maX: maX,
-            maY: maY
-        }
+        return new Bounds(miX, miY, maX, maY);
     }
 }

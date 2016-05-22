@@ -51,8 +51,6 @@ var inputX: HTMLInputElement = <HTMLInputElement>document.getElementById('inputX
 var inputY: HTMLInputElement = <HTMLInputElement>document.getElementById('inputY');
 
 //Object holders
-var polygonArray: Polygon[] = [];
-var pointArray: Point[] = [];
 
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
@@ -63,13 +61,14 @@ function Update() {
 //Prepared for future optimalizations
 function RecountUpdate() {
     var bounds = Bounds.GetEmpty();
-    for (var i = 0; i < polygonArray.length; i++)
-        var pBounds = polygonArray[i].bounds;
+    for (var i = 0; i < table.elements.length; i++)
+        bounds.UpdateB(table.GetElement(i).value.bounds);
 
     var maxDist = Math.abs(bounds.maX);
     maxDist = ReturnAbsBigger(maxDist, bounds.maY);
     maxDist = ReturnAbsBigger(maxDist, bounds.miX);
     maxDist = ReturnAbsBigger(maxDist, bounds.miY);
+    console.log(bounds);
     return {
         scale: maxSize / maxDist,
         offset: new Offset((bounds.maX + bounds.miX) / 2, (bounds.maY + bounds.miY) / 2)
@@ -81,8 +80,8 @@ function DrawUpdate(scale: number, offset: Offset) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "#000000";
     //DrawCross();
-    for (var i = 0; i < polygonArray.length; i++)
-        polygonArray[i].Draw(ctx, scale, center);
+    for (var i = 0; i < table.elements.length; i++)
+        table.GetElement(i).value.Draw(ctx, scale, offset);
 }
 
 /*function DrawIntersections(array) {
