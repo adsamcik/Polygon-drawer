@@ -30,6 +30,7 @@ var scaler = 0.48;
 var maxSize: number;
 //should save a nano second here and there
 var halfWidth: number, halfHeight: number;
+var changed = true;
 
 //settings
 var horizontalIntersect = true;
@@ -56,7 +57,9 @@ var inputY: HTMLInputElement = <HTMLInputElement>document.getElementById('inputY
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
     var rcnt = RecountUpdate();
-    DrawUpdate(rcnt.scale, rcnt.offset);
+    if (changed)
+        DrawUpdate(rcnt.scale, rcnt.offset);
+    changed = false;
 };
 
 //Prepared for future optimalizations
@@ -167,6 +170,7 @@ function Rebuild() {
     halfWidth = canvas.width / 2;
     halfHeight = canvas.height / 2;
     maxSize = canvas.width > canvas.height ? canvas.height : canvas.width;
+    changed = true;
 }
 
 
@@ -233,3 +237,4 @@ function AddPoint() {
 //initialization
 polygonSelect.add(GenerateOption("Add new"));
 polygonSelect.add(GenerateOption("Point"));
+window.onresize = Rebuild;

@@ -78,30 +78,36 @@ class TableElement {
         cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored'><img src='icons/remove.svg' width='24px'></button>";
         var btn = <HTMLButtonElement>cell4.firstChild;
         var _this = this;
-        btn.addEventListener("click", function (event) {_this.Remove(this.CalcRowIndex(event));}, false);
+        btn.addEventListener("click", function (event) { _this.Remove(_this.CalcRowIndex(event)); }, false);
 
-        cell2.firstChild.addEventListener("keypress", function (event) {_this.InputChange(<KeyboardEvent>event);}, false);
-        cell3.firstChild.addEventListener("keypress", function (event) {_this.InputChange(<KeyboardEvent>event);}, false);
+        cell2.firstChild.addEventListener("input", function (event) { _this.InputChange(<KeyboardEvent>event); }, false);
+        cell3.firstChild.addEventListener("input", function (event) { _this.InputChange(<KeyboardEvent>event); }, false);
     }
 
-    private InputChange(event: KeyboardEvent) {
-        if (CheckKey(event)) {
+    private InputChange(event: Event) {
+        var e = (<HTMLInputElement>event.target);
+        if (e.value != "-" && parseInt(e.value) != NaN) {
             if (this.value instanceof Polygon) {
                 var val = (<Polygon>this.value).points[this.CalcRowIndex(event)];
-                var t = (<HTMLInputElement>event.target);
-                var type = t.dataset["type"];
-                switch (type) {
-                    case 'x':
-                        val.x = +t.value;
-                        break;
-                    case 'y':
-                        val.y = +t.value;
-                        break;
+                console.log(val);
+                if (parseInt(e.value) != NaN) {
+                    var type = e.dataset["type"];
+                    switch (type) {
+                        case 'x':
+                            val.x = parseInt(e.value);
+                            break;
+                        case 'y':
+                            val.y = parseInt(e.value);
+                            break;
+                    }
+                    changed = true;
                 }
+                console.log(val);
             }
             return true;
         }
-        return false;
+        
+        return e.value == "" || e.value == "-"? true : false;
     }
 
     CalcRowIndex(event: Event) {
@@ -118,11 +124,13 @@ class Table {
     }
 
     AddElement(s: Shape) {
+        changed = true;
         return this.elements.push(new TableElement(this, s)) - 1;
     }
 
     AddValue(index: number, s: Coord) {
         this.elements[index].Add(s);
+        changed = true;
     }
 
     GetElement(index: number = -1) {
