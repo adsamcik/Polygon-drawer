@@ -22,7 +22,8 @@ var mouse: Coord = new Coord(0, 0);
 //center of the screen
 var center: Offset = new Offset(0, 0);
 
-//no idea what it is, but it looks important
+//Constant value to handle negative values (screen is 1/2 as high because upper half are positive and lower half are negative numbers)
+//that's 0.5 and the -0.02 from that is to keep it from edges a bit
 var scaler = 0.48;
 
 //width or height of the canvas, which one is bigger
