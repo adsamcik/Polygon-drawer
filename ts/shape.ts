@@ -5,7 +5,7 @@ class Shape {
     }
 
     get bounds() {
-        return new Bounds(0,0,0,0);
+        return new Bounds(0, 0, 0, 0);
     }
 
     Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
@@ -14,33 +14,37 @@ class Shape {
 
 class Point extends Shape {
     coord: Coord;
-    type: number;
 
-    constructor(ctx: CanvasRenderingContext2D, coord: Coord, type: number = -1) {
+    constructor(ctx: CanvasRenderingContext2D, coord: Coord) {
         super(ctx);
         this.coord = coord;
-        this.type = type;
     }
 
     Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = '#757575';
-        DrawRoundedRect(ctx, this.coord.ScaleCoord(scale, offset).drawCoords, 60, 30, 7, true, false);
+        ctx.beginPath();
+        var scaled = this.coord.ScaleCoord(scale, offset);
+        console.log(scaled);
+        console.log(this);
+        ctx.arc(scaled.scaledX, scaled.scaledY, maxSize / 10, 0, 2 * Math.PI, false);
+        ctx.fillStyle = '#003300';
+        ctx.stroke();
+        ctx.fill();
+        //DrawRoundedRect(ctx, this.coord.ScaleCoord(scale, offset).drawCoords, 60, 30, 7, true, false);
     }
 
     get x() {
         return this.coord.x;
     }
-    
-    set x(val:number) {
+
+    set x(val: number) {
         this.coord.x = val;
     }
 
     get y() {
         return this.coord.y;
     }
-    
-    set y(val:number) {
+
+    set y(val: number) {
         this.coord.y = val;
     }
 

@@ -45,7 +45,7 @@ var updateInt = setInterval(Update, 20);
 
 //Input vars
 var polygonSelect: HTMLSelectElement = <HTMLSelectElement>document.getElementById('add-polygon');
-var selectedTab:HTMLSpanElement;
+var selectedTab: HTMLSpanElement;
 var inputType: string;
 SetInputType(document.getElementById('input-type-select').children[0]);
 
@@ -73,6 +73,8 @@ function RecountUpdate() {
     maxDist = ReturnAbsBigger(maxDist, bounds.miX);
     maxDist = ReturnAbsBigger(maxDist, bounds.miY);
     var scale = maxSize / maxDist;
+    if (scale === Infinity)
+        scale = maxSize / 2;
     return {
         scale: scale * scaler,
         offset: new Offset(halfWidth, halfHeight)
@@ -228,8 +230,11 @@ function AddPoint() {
         polygonSelect.selectedIndex = table.AddElement(new Polygon(ctx)) + 2;
     }
 
-    table.AddValue(polygonSelect.selectedIndex - 2, selectedTab.innerText.toLowerCase() == 'vector' ? new Vector(+inputX.value, +inputY.value) : new Coord(+inputX.value, +inputY.value));
-
+    if (polygonSelect.selectedIndex == 1) {
+        table.AddElement(new Point(ctx, new Coord(+inputX.value, +inputY.value)))
+    }
+    else
+        table.AddValue(polygonSelect.selectedIndex - 2, selectedTab.innerText.toLowerCase() == 'vector' ? new Vector(+inputX.value, +inputY.value) : new Coord(+inputX.value, +inputY.value));
     inputX.value = "";
     inputY.value = "";
 }
