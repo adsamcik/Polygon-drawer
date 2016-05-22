@@ -224,7 +224,7 @@ function AddPoint() {
         polygonSelect.selectedIndex = table.AddElement(new Polygon(ctx)) + 2;
     }
 
-    table.AddValue(table.elements.length - 1, new Coord(+inputX.value, +inputY.value));
+    table.AddValue(polygonSelect.selectedIndex - 2, new Coord(+inputX.value, +inputY.value));
 
     inputX.value = "";
     inputY.value = "";
