@@ -1,9 +1,7 @@
 class Shape {
-    row: HTMLTableRowElement;
     ctx: CanvasRenderingContext2D;
-    constructor(ctx: CanvasRenderingContext2D, tableRow: HTMLTableRowElement) {
+    constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
-        this.row = tableRow;
     }
 }
 
@@ -11,9 +9,9 @@ class Point extends Shape {
     coord: Coord;
     type: number;
 
-    constructor(ctx: CanvasRenderingContext2D, tableRow: HTMLTableRowElement, x: number, y: number, type: number = -1) {
-        super(ctx, tableRow);
-        this.coord = new Coord(x, y);
+    constructor(ctx: CanvasRenderingContext2D, coord:Coord, type: number = -1) {
+        super(ctx);
+        this.coord = coord;
         this.type = type;
     }
 

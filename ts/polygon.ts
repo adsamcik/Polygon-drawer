@@ -1,9 +1,8 @@
 class Polygon extends Shape {
     points: Coord[];
 
-    constructor(ctx: CanvasRenderingContext2D, tableRow: HTMLTableRowElement) {
-        super(ctx, tableRow);
-        this.row = tableRow;
+    constructor(ctx: CanvasRenderingContext2D) {
+        super(ctx);
         this.points = [];
         this.ctx = ctx;
     }
@@ -37,7 +36,9 @@ class Polygon extends Shape {
         }
     }
 
-    GetPoint(index: number) {
+    GetPoint(index: number = -1) {
+        if (index == -1)
+            return this.points[this.points.length - 1];
         return this.points[index];
     }
 

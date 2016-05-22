@@ -3,10 +3,11 @@
 /// <reference path="shape.ts"/>
 /// <reference path="circle.ts"/>
 /// <reference path="polygon.ts"/>
+/// <reference path="table.ts"/>
 /// <reference path="draw.ts"/>
 
 //table setup
-var table = document.getElementById("table") as HTMLTableElement;
+var table = new Table(<HTMLTableElement>document.getElementById("table"));
 var nextIndex = 0;
 
 //canvas setup
@@ -25,9 +26,9 @@ var center: Offset = new Offset(0, 0);
 var scaler = 0.48;
 
 //width or height of the canvas, which one is bigger
-var maxSize:number;
+var maxSize: number;
 //should save a nano second here and there
-var halfWidth:number, halfHeight:number;
+var halfWidth: number, halfHeight: number;
 
 //settings
 var horizontalIntersect = true;
@@ -43,7 +44,7 @@ var updateInt = setInterval(Update, 20);
 //Input vars
 var polygonSelect: HTMLSelectElement = <HTMLSelectElement>document.getElementById('add-polygon');
 var selectedTab;
-var inputType:string;
+var inputType: string;
 SetInputType(document.getElementById('input-type-select').children[0]);
 
 var inputX: HTMLInputElement = <HTMLInputElement>document.getElementById('inputX');
@@ -184,7 +185,7 @@ function ClearAll() {
     //savedILines = [];
 }
 
-function SetInputType(elem:Element) {
+function SetInputType(elem: Element) {
     inputType = elem.innerHTML.toLowerCase();
     if (selectedTab != null)
         selectedTab.className = selectedTab.className.replace(' is-active', '').trim();
@@ -193,7 +194,7 @@ function SetInputType(elem:Element) {
     elem.className += ' is-active';
 }
 
-function CheckKey(event) {
+function CheckKey(event: KeyboardEvent) {
     var key = event.keyCode || event.charCode;
     //allowed keys are 1-9, backspace, delete and -
     return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
@@ -220,47 +221,10 @@ function AddPoint() {
         return;
 
     if (polygonSelect.selectedIndex == 0) {
-        var row = table.insertRow();
-        var cell = row.insertCell(0);
-        cell.colSpan = 4;
-        cell.innerText = "polygon " + polygonArray.length;
-        polygonArray.push(new Polygon(ctx, row));
-
-        polygonSelect.add(GenerateOption("Polygon " + polygonArray.length));
-        polygonSelect.selectedIndex = polygonArray.length + 1;
+        polygonSelect.selectedIndex = table.AddElement(new Polygon(ctx)) + 2;
     }
 
-    if (polygonSelect.selectedIndex == 1) {
-        var row = table.insertRow();
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
-
-        cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
-        cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
-        cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'><img src='icons/remove.svg' width='24px'></button>";
-
-        pointArray.push(new Point(ctx, row, +inputX.value, +inputY.value));
-    }
-    else {
-        var polygon = polygonArray[polygonSelect.selectedIndex - 2];
-        var row = table.insertRow();
-
-        //insert cells
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
-        //fill cells
-        cell1.innerHTML = "<img src='icons/" + inputType + ".svg' width='24'>";
-        cell1.className = 'cellCollapsed';
-        cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputX.value + "'>";
-        cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + inputY.value + "'>";
-        cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored' onclick='RemovePoint(" + nextIndex + ")'><img src='icons/remove.svg' width='24px'></button>";
-
-        polygon.AddPoint(+inputX.value, +inputY.value, inputType == "vector");
-    }
+    table.AddValue(table.elements.length - 1, new Coord(+inputX.value, +inputY.value));
 
     inputX.value = "";
     inputY.value = "";
