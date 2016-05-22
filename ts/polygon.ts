@@ -21,23 +21,31 @@ class Polygon extends Shape {
                 new Coord(x, y)
         );
     }
-    
-    RemovePoint(index:number) {
+
+    AddPointC(coord: Coord) {
+        //Add point/vector if vector get previous coord, if no coord is found, insert zero
+        this.points.push(coord);
+    }
+
+
+    RemovePoint(index: number) {
         this.points.splice(index, 1);
     }
 
     Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
         ctx.strokeStyle = "#000";
         ctx.lineWidth = 2;
-        for (var i = 0; i < this.points.length - 1; i++) {
-            //console.log("from (" + this.points[i].x + ", " + this.points[i].y + ") to (" + this.points[i+1].x + ", " + this.points[i+1].y + ")");
-            ctx.beginPath();
-            var pos = this.points[i].ScaleCoord(scale, offset);
+        ctx.beginPath();
+        if (this.points.length > 0 && this.points[0]) {
+            var pos = this.points[0].ScaleCoord(scale, offset);
             ctx.moveTo(pos.scaledX, pos.scaledY);
-            pos = this.points[i + 1].ScaleCoord(scale, offset);
-            ctx.lineTo(pos.scaledX, pos.scaledY);
-            ctx.stroke();
         }
+        for (var i = 0; i < this.points.length; i++) {
+            //console.log("from (" + this.points[i].x + ", " + this.points[i].y + ") to (" + this.points[i+1].x + ", " + this.points[i+1].y + ")");
+            pos = this.points[i].ScaleCoord(scale, offset);
+            ctx.lineTo(pos.scaledX, pos.scaledY);
+        }
+        ctx.stroke();
     }
 
     GetPoint(index: number = -1) {

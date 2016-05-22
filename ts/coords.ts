@@ -44,7 +44,7 @@ class Coord {
 
 class Vector extends Coord {
     base: Coord;
-    constructor(x: number, y: number, base: Coord) {
+    constructor(x: number, y: number, base: Coord = Coord.zero) {
         super(x, y);
         this.base = base;
     }

@@ -45,7 +45,7 @@ var updateInt = setInterval(Update, 20);
 
 //Input vars
 var polygonSelect: HTMLSelectElement = <HTMLSelectElement>document.getElementById('add-polygon');
-var selectedTab;
+var selectedTab:HTMLSpanElement;
 var inputType: string;
 SetInputType(document.getElementById('input-type-select').children[0]);
 
@@ -194,7 +194,7 @@ function SetInputType(elem: Element) {
     if (selectedTab != null)
         selectedTab.className = selectedTab.className.replace(' is-active', '').trim();
 
-    selectedTab = elem;
+    selectedTab = <HTMLSpanElement>elem;
     elem.className += ' is-active';
 }
 
@@ -228,7 +228,7 @@ function AddPoint() {
         polygonSelect.selectedIndex = table.AddElement(new Polygon(ctx)) + 2;
     }
 
-    table.AddValue(polygonSelect.selectedIndex - 2, new Coord(+inputX.value, +inputY.value));
+    table.AddValue(polygonSelect.selectedIndex - 2, selectedTab.innerText.toLowerCase() == 'vector' ? new Vector(+inputX.value, +inputY.value) : new Coord(+inputX.value, +inputY.value));
 
     inputX.value = "";
     inputY.value = "";
