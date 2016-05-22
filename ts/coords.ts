@@ -29,8 +29,16 @@ class Coord {
         return this.cx;
     }
     
+    set x(val:number) {
+        this.cx = val;
+    }
+    
     get y() {
         return this.cy;
+    }
+    
+    set y(val:number) {
+        this.cy = val;
     }
 }
 

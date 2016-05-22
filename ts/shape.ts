@@ -31,9 +31,17 @@ class Point extends Shape {
     get x() {
         return this.coord.x;
     }
+    
+    set x(val:number) {
+        this.coord.x = val;
+    }
 
     get y() {
         return this.coord.y;
+    }
+    
+    set y(val:number) {
+        this.coord.y = val;
     }
 
     get bounds() {

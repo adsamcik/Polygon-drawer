@@ -73,14 +73,39 @@ class TableElement {
         //fill cells
         cell1.innerHTML = "<img src='icons/" + (c instanceof Vector ? "vector" : "point") + ".svg' width='24'>";
         cell1.className = 'cellCollapsed';
-        cell2.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + c.x + "'>";
-        cell3.innerHTML = "<input type='text' onkeypress='return CheckKey(event)' value='" + c.y + "'>";
+        cell2.innerHTML = "<input type='text' data-type='x' value='" + c.x + "'>";
+        cell3.innerHTML = "<input type='text' data-type='y' value='" + c.y + "'>";
         cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored'><img src='icons/remove.svg' width='24px'></button>";
         var btn = <HTMLButtonElement>cell4.firstChild;
         var _this = this;
-        btn.addEventListener("click", function (event) {
-            _this.Remove((<HTMLTableRowElement>(<HTMLButtonElement>event.target).parentElement.parentElement).rowIndex - _this.row.rowIndex - 1);
-        }, false);
+        btn.addEventListener("click", function (event) {_this.Remove(this.CalcRowIndex(event));}, false);
+
+        cell2.firstChild.addEventListener("keypress", function (event) {_this.InputChange(<KeyboardEvent>event);}, false);
+        cell3.firstChild.addEventListener("keypress", function (event) {_this.InputChange(<KeyboardEvent>event);}, false);
+    }
+
+    private InputChange(event: KeyboardEvent) {
+        if (CheckKey(event)) {
+            if (this.value instanceof Polygon) {
+                var val = (<Polygon>this.value).points[this.CalcRowIndex(event)];
+                var t = (<HTMLInputElement>event.target);
+                var type = t.dataset["type"];
+                switch (type) {
+                    case 'x':
+                        val.x = +t.value;
+                        break;
+                    case 'y':
+                        val.y = +t.value;
+                        break;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    CalcRowIndex(event: Event) {
+        return (<HTMLTableRowElement>(<HTMLElement>event.target).parentElement.parentElement).rowIndex - this.row.rowIndex - 1;
     }
 }
 
@@ -113,9 +138,8 @@ class Table {
 
     RemoveElementValue(val: TableElement) {
         var index = this.elements.indexOf(val);
-        console.log("Remove");
-        console.log(val);
         this.t.deleteRow(val.row.rowIndex);
+        polygonSelect.remove(index + 2);
         this.elements.splice(index, 1);
     }
 } 
