@@ -1,6 +1,7 @@
 /// <reference path="bounds.ts"/>
 /// <reference path="coords.ts"/>
 /// <reference path="shape.ts"/>
+/// <reference path="circle.ts"/>
 /// <reference path="polygon.ts"/>
 /// <reference path="draw.ts"/>
 

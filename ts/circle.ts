@@ -1,3 +1,4 @@
+/// <reference path="shape.ts"/>
 class Circle extends Shape {
     center:Coord;
     radius:number
