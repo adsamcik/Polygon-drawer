@@ -60,6 +60,7 @@ class TableElement {
             return;
         }
         this.table.t.deleteRow(this.row.rowIndex + 1 + rowIndex);
+        changed = true;
     }
 
     private AddToTable(index: number, c: Coord) {
