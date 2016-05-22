@@ -1,13 +1,13 @@
 class TableElement {
     row: HTMLTableRowElement;
-    table: HTMLTableElement;
+    table: Table;
     value: Shape;
 
-    constructor(table: HTMLTableElement, value: Shape) {
+    constructor(table: Table, value: Shape) {
         this.table = table;
         this.value = value;
 
-        this.row = table.insertRow();
+        this.row = table.t.insertRow();
         var cell = this.row.insertCell(0);
         cell.colSpan = 4;
         cell.innerText = value.constructor.name;
@@ -32,31 +32,38 @@ class TableElement {
     }
 
     Remove(index: number = -1) {
-        if (index == -1) {
-            if (this.value instanceof Polygon) {
-                for (var i = (<Polygon>this.value).points.length; i >= 0; i--)
-                    this.table.deleteRow(this.row.rowIndex + i);
+        if (this.value instanceof Polygon) {
+            var p = (<Polygon>this.value);
+            if (index == -1) {
+                for (var i = p.points.length; i >= 0; i--)
+                    this.table.t.deleteRow(this.row.rowIndex + i);
+                this.table.RemoveElementValue(this);
             }
-            else
-                this.table.deleteRow(this.row.rowIndex);
+            else {
+                this.RemoveRow(index);
+                p.RemovePoint(index);
+                if (p.points.length == 0)
+                    this.table.RemoveElementValue(this);
+            }
         }
-        else
-            this.table.deleteRow(index);
+        else {
+            if (index < -1 || index > 0)
+                console.error("Removing invalid index " + this.constructor.name + " cannot have more values than 1");
+            this.RemoveRow(0);
+            this.table.RemoveElementValue(this);
+        }
     }
 
     RemoveRow(rowIndex: number) {
-        var index = (rowIndex - this.row.rowIndex) - 1;
-        if (index < 0 || (index > 0 && !(this.value instanceof Polygon))) {
-            console.error("Row does not belong to element " + this.value.constructor.name + " on index " + this.row.rowIndex);
+        if (rowIndex < 0 || (rowIndex > 0 && !(this.value instanceof Polygon))) {
+            console.error("Row (" + rowIndex + ") does not belong to element " + this.value.constructor.name + " on index " + this.row.rowIndex);
             return;
         }
-        console.log(index + "  " + rowIndex + " - " + this.row.rowIndex);
-        (<Polygon>this.value).RemovePoint(index);
-        this.table.deleteRow(rowIndex);
+        this.table.t.deleteRow(this.row.rowIndex + 1 + rowIndex);
     }
 
     private AddToTable(index: number, c: Coord) {
-        var row = this.table.insertRow(this.row.rowIndex + index);
+        var row = this.table.t.insertRow(this.row.rowIndex + index);
 
         //insert cells
         var cell1 = row.insertCell(0);
@@ -72,7 +79,7 @@ class TableElement {
         var btn = <HTMLButtonElement>cell4.firstChild;
         var _this = this;
         btn.addEventListener("click", function (event) {
-            _this.RemoveRow((<HTMLTableRowElement>(<HTMLButtonElement>event.target).parentElement.parentElement).rowIndex);
+            _this.Remove((<HTMLTableRowElement>(<HTMLButtonElement>event.target).parentElement.parentElement).rowIndex - _this.row.rowIndex - 1);
         }, false);
     }
 }
@@ -86,7 +93,7 @@ class Table {
     }
 
     AddElement(s: Shape) {
-        return this.elements.push(new TableElement(this.t, s)) - 1;
+        return this.elements.push(new TableElement(this, s)) - 1;
     }
 
     AddValue(index: number, s: Coord) {
@@ -97,5 +104,18 @@ class Table {
         if (index == -1)
             return this.elements[this.elements.length - 1];
         return this.elements[index];
+    }
+
+    RemoveElement(index: number) {
+        this.t.deleteRow(this.elements[index].row.rowIndex);
+        this.elements.splice(index, 1);
+    }
+
+    RemoveElementValue(val: TableElement) {
+        var index = this.elements.indexOf(val);
+        console.log("Remove");
+        console.log(val);
+        this.t.deleteRow(val.row.rowIndex);
+        this.elements.splice(index, 1);
     }
 } 
