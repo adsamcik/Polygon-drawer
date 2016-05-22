@@ -68,10 +68,10 @@ function RecountUpdate() {
     maxDist = ReturnAbsBigger(maxDist, bounds.maY);
     maxDist = ReturnAbsBigger(maxDist, bounds.miX);
     maxDist = ReturnAbsBigger(maxDist, bounds.miY);
-    console.log(bounds);
+    var scale = maxSize / maxDist;
     return {
-        scale: maxSize / maxDist,
-        offset: new Offset((bounds.maX + bounds.miX) / 2, (bounds.maY + bounds.miY) / 2)
+        scale: scale * scaler,
+        offset: new Offset(halfWidth, halfHeight)
     };
 }
 
