@@ -14,9 +14,15 @@ class TableElement {
 
         if (value instanceof Polygon) {
             var p = <Polygon>value;
-            for (var i = 0; i < p.points.length; i++) {
+            for (var i = 0; i < p.points.length; i++)
                 this.AddToTable(i, p.GetPoint(i));
-            }
+            
+            var row = this.table.t.insertRow(this.row.rowIndex + p.points.length + 1);        
+            cell = row.insertCell(0);
+            cell.colSpan = 4;
+            cell.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--primary' style='margin: 0 auto;display:block;'>Add coord</button>";
+            var _this = this;
+            cell.children[0].addEventListener('click', event => {_this.Add(Coord.zero)});
         }
         else
             this.AddToTable(0, this.value.coord);
@@ -24,6 +30,7 @@ class TableElement {
     }
 
     Add(item: Coord) {
+        changed = true;
         if (this.value instanceof Polygon) {
             var p = (<Polygon>this.value);
             p.AddPoint(item.x, item.y, item instanceof Vector);
@@ -80,32 +87,6 @@ class TableElement {
         btn.addEventListener("click", function (event) { _this.Remove(_this.CalcRowIndex(event)); }, false);
     }
 
-    private InputChange(event: Event) {
-        var e = (<HTMLInputElement>event.target);
-        if (e.value != "-" && parseInt(e.value) != NaN) {
-            if (this.value instanceof Polygon) {
-                var val = (<Polygon>this.value).points[this.CalcRowIndex(event)];
-                console.log(val);
-                if (parseInt(e.value) != NaN) {
-                    var type = e.dataset["type"];
-                    switch (type) {
-                        case 'x':
-                            val.x = parseInt(e.value);
-                            break;
-                        case 'y':
-                            val.y = parseInt(e.value);
-                            break;
-                    }
-                    changed = true;
-                }
-                console.log(val);
-            }
-            return true;
-        }
-
-        return e.value == "" || e.value == "-" ? true : false;
-    }
-
     CalcRowIndex(event: Event) {
         return (<HTMLTableRowElement>(<HTMLElement>event.target).parentElement.parentElement).rowIndex - this.row.rowIndex - 1;
     }
@@ -122,11 +103,6 @@ class Table {
     AddElement(s: Shape) {
         changed = true;
         return this.elements.push(new TableElement(this, s)) - 1;
-    }
-
-    AddValue(index: number, s: Coord) {
-        this.elements[index].Add(s);
-        changed = true;
     }
 
     GetElement(index: number = -1) {
