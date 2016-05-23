@@ -18,7 +18,7 @@ class Coord {
     }
 
     ScaleCoord(scale: number, offset: Offset) {
-        return new ScaledCoord(this.x, this.y, scale, offset);
+        return new ScaledCoord(this.x, -this.y, scale, offset);
     }
 
     static get zero() {
@@ -52,7 +52,7 @@ class Vector extends Coord {
     }
 
     ScaleCoord(scale: number, offset: Offset) {
-        return new ScaledVector(this.x, this.y, scale, offset);
+        return new ScaledVector(this.x, -this.y, scale, offset);
     }
 
     get x() {
