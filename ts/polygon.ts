@@ -1,9 +1,9 @@
 class Polygon extends Shape {
     points: Coord[];
 
-    constructor(ctx: CanvasRenderingContext2D) {
-        super(ctx);
-        this.points = [];
+    constructor(ctx: CanvasRenderingContext2D, coord:Coord) {
+        super(ctx, coord);
+        this.points = [coord];
         this.ctx = ctx;
     }
 
@@ -68,5 +68,22 @@ class Polygon extends Shape {
                 maY = point.y;
         }
         return new Bounds(miX, miY, maX, maY);
+    }
+    
+    GenerateTableFieldsFor(row: HTMLTableRowElement) {
+        var _this = this.GetPoint();
+        
+        row.children[0].innerHTML = "<img src='icons/" + (_this instanceof Vector ? "vector" : "point") + ".svg' width='24'>";
+        row.children[0].className = 'cellCollapsed';
+        
+        var inp = <HTMLInputElement>document.createElement("input");
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target);if (IsValid(t)) _this.x = +t.value; });
+        inp.value = _this.x.toString();
+        row.children[1].appendChild(inp);
+        
+        var inp = <HTMLInputElement>document.createElement("input");
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target);if (IsValid(t)) _this.y = +t.value; });
+        inp.value = _this.y.toString();
+        row.children[2].appendChild(inp);
     }
 }

@@ -43,17 +43,6 @@ Rebuild();
 //update 50 times per second
 var updateInt = setInterval(Update, 20);
 
-//Input vars
-var polygonSelect: HTMLSelectElement = <HTMLSelectElement>document.getElementById('add-polygon');
-var selectedTab: HTMLSpanElement;
-var inputType: string;
-SetInputType(document.getElementById('input-type-select').children[0]);
-
-var inputX: HTMLInputElement = <HTMLInputElement>document.getElementById('inputX');
-var inputY: HTMLInputElement = <HTMLInputElement>document.getElementById('inputY');
-
-//Object holders
-
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
     var rcnt = RecountUpdate();
@@ -88,6 +77,7 @@ function DrawUpdate(scale: number, offset: Offset) {
     //DrawCross();
     for (var i = 0; i < table.elements.length; i++)
         table.GetElement(i).value.Draw(ctx, scale, offset);
+    console.log("redraw");
 }
 
 /*function DrawIntersections(array) {
@@ -191,19 +181,20 @@ function ClearAll() {
     //savedILines = [];
 }
 
-function SetInputType(elem: Element) {
-    inputType = elem.innerHTML.toLowerCase();
-    if (selectedTab != null)
-        selectedTab.className = selectedTab.className.replace(' is-active', '').trim();
-
-    selectedTab = <HTMLSpanElement>elem;
-    elem.className += ' is-active';
-}
-
 function CheckKey(event: KeyboardEvent) {
     var key = event.keyCode || event.charCode;
     //allowed keys are 1-9, backspace, delete and -
     return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
+};
+
+function IsValidInt(inputField: HTMLInputElement) {
+    if (inputField.value.trim() == "" || !parseInt(inputField.value)) {
+        inputField.className += ' invalid';
+        return false;
+    } else {
+        inputField.className = inputField.className.replace(' invalid', '');
+        return true;
+    }
 };
 
 function IsValid(inputField: HTMLInputElement) {
@@ -211,7 +202,7 @@ function IsValid(inputField: HTMLInputElement) {
         inputField.className += ' invalid';
         return false;
     } else {
-        inputField.className = inputX.className.replace(' invalid', '');
+        inputField.className = inputField.className.replace(' invalid', '');
         return true;
     }
 };
@@ -222,24 +213,17 @@ function GenerateOption(name) {
     return option;
 };
 
+function AddPolygon() {
+    table.AddElement(new Polygon(ctx, Coord.zero));
+}
+
+function AddCircle() {
+    table.AddElement(new Circle(ctx, Coord.zero, 1));
+}
+
 function AddPoint() {
-    if (!(IsValid(<HTMLInputElement>inputX) && IsValid(<HTMLInputElement>inputY)))
-        return;
-
-    if (polygonSelect.selectedIndex == 0) {
-        polygonSelect.selectedIndex = table.AddElement(new Polygon(ctx)) + 2;
-    }
-
-    if (polygonSelect.selectedIndex == 1) {
-        table.AddElement(new Point(ctx, new Coord(+inputX.value, +inputY.value)))
-    }
-    else
-        table.AddValue(polygonSelect.selectedIndex - 2, selectedTab.innerText.toLowerCase() == 'vector' ? new Vector(+inputX.value, +inputY.value) : new Coord(+inputX.value, +inputY.value));
-    inputX.value = "";
-    inputY.value = "";
+    table.AddElement(new Point(ctx, Coord.zero));
 }
 
 //initialization
-polygonSelect.add(GenerateOption("Add new"));
-polygonSelect.add(GenerateOption("Point"));
 window.onresize = Rebuild;

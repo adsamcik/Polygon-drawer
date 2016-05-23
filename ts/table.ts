@@ -11,7 +11,6 @@ class TableElement {
         var cell = this.row.insertCell(0);
         cell.colSpan = 4;
         cell.innerText = value.constructor.name;
-        polygonSelect.add(GenerateOption("Polygon"));
 
         if (value instanceof Polygon) {
             var p = <Polygon>value;
@@ -19,17 +18,16 @@ class TableElement {
                 this.AddToTable(i, p.GetPoint(i));
             }
         }
-        else {
-            //ToDo Make this more verbose
-            this.AddToTable(0, (<Point>this.value).coord)
-        }
+        else
+            this.AddToTable(0, this.value.coord);
+
     }
 
     Add(item: Coord) {
         if (this.value instanceof Polygon) {
             var p = (<Polygon>this.value);
             p.AddPoint(item.x, item.y, item instanceof Vector);
-            this.AddToTable(p.points.length-1, p.GetPoint());
+            this.AddToTable(p.points.length - 1, p.GetPoint());
         }
         else
             console.error("Element " + item.constructor.name + " on row index " + this.row.rowIndex + " does not support adding items");
@@ -69,24 +67,17 @@ class TableElement {
 
     private AddToTable(index: number, c: Coord) {
         var row = this.table.t.insertRow(this.row.rowIndex + index + 1);
-
-        //insert cells
+        
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
         var cell4 = row.insertCell(3);
-        //fill cells
-        cell1.innerHTML = "<img src='icons/" + (c instanceof Vector ? "vector" : "point") + ".svg' width='24'>";
-        cell1.className = 'cellCollapsed';
-        cell2.innerHTML = "<input type='text' data-type='x' value='" + c.x + "'>";
-        cell3.innerHTML = "<input type='text' data-type='y' value='" + c.y + "'>";
+        this.value.GenerateTableFieldsFor(row);
+        
         cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored'><img src='icons/remove.svg' width='24px'></button>";
         var btn = <HTMLButtonElement>cell4.firstChild;
         var _this = this;
         btn.addEventListener("click", function (event) { _this.Remove(_this.CalcRowIndex(event)); }, false);
-
-        cell2.firstChild.addEventListener("input", function (event) { _this.InputChange(<KeyboardEvent>event); }, false);
-        cell3.firstChild.addEventListener("input", function (event) { _this.InputChange(<KeyboardEvent>event); }, false);
     }
 
     private InputChange(event: Event) {
@@ -111,8 +102,8 @@ class TableElement {
             }
             return true;
         }
-        
-        return e.value == "" || e.value == "-"? true : false;
+
+        return e.value == "" || e.value == "-" ? true : false;
     }
 
     CalcRowIndex(event: Event) {
@@ -152,7 +143,6 @@ class Table {
     RemoveElementValue(val: TableElement) {
         var index = this.elements.indexOf(val);
         this.t.deleteRow(val.row.rowIndex);
-        polygonSelect.remove(index + 2);
         this.elements.splice(index, 1);
     }
 } 

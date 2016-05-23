@@ -1,7 +1,9 @@
 class Shape {
     ctx: CanvasRenderingContext2D;
-    constructor(ctx: CanvasRenderingContext2D) {
+    coord: Coord;
+    constructor(ctx: CanvasRenderingContext2D, coord: Coord) {
         this.ctx = ctx;
+        this.coord = coord;
     }
 
     get bounds() {
@@ -10,14 +12,15 @@ class Shape {
 
     Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
     }
+
+    GenerateTableFieldsFor(row: HTMLTableRowElement) {
+
+    }
 }
 
 class Point extends Shape {
-    coord: Coord;
-
     constructor(ctx: CanvasRenderingContext2D, coord: Coord) {
-        super(ctx);
-        this.coord = coord;
+        super(ctx, coord);
     }
 
     Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
@@ -48,5 +51,18 @@ class Point extends Shape {
 
     get bounds() {
         return new Bounds(this.x, this.y, this.x, this.y);
+    }
+
+    GenerateTableFieldsFor(row: HTMLTableRowElement) {
+        var _this = this;
+        var inp = <HTMLInputElement>document.createElement("input");
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) _this.x = +t.value });
+        inp.value = this.x.toString();
+        row.children[1].appendChild(inp);
+
+        var inp = <HTMLInputElement>document.createElement("input");
+        inp.value = this.y.toString();
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) _this.y = +t.value; });
+        row.children[2].appendChild(inp);
     }
 }

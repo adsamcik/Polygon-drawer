@@ -30,6 +30,7 @@ class Coord {
     }
     
     set x(val:number) {
+        changed = true;
         this.cx = val;
     }
     
@@ -38,6 +39,7 @@ class Coord {
     }
     
     set y(val:number) {
+        changed = true;
         this.cy = val;
     }
 }
@@ -58,6 +60,7 @@ class Vector extends Coord {
     }
     
     set x(val:number) {
+        changed = true;
         this.cx = val;
     }
     
@@ -66,6 +69,7 @@ class Vector extends Coord {
     }
     
     set y(val:number) {
+        changed = true;
         this.cy = val;
     }
     

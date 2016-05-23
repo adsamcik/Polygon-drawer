@@ -17,14 +17,26 @@ input:focus {
     border-bottom-color: #3F51B5;
 }
 
+.mdl-button--fab.mdl-button--colored {
+    background: #648CB4;
+}
+
+.mdl-button--fab.mdl-button--colored:hover {
+    background: #5078A0;
+}
+
 #newPointWrapper {
     position: fixed;
     bottom: 30px;
     right: 3%;
     padding-bottom: 20px;
-    width: 240px;
     border: 0;
     background: rgba(255, 255, 255, 0.9);
+}
+
+#newPointWrapper button {
+    margin-top: 10px;
+    display: block;
 }
 
 #table {
