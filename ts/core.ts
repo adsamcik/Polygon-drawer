@@ -62,11 +62,11 @@ function RecountUpdate() {
     maxDist = ReturnAbsBigger(maxDist, bounds.maY);
     maxDist = ReturnAbsBigger(maxDist, bounds.miX);
     maxDist = ReturnAbsBigger(maxDist, bounds.miY);
-    
+
     var scale = maxSize / maxDist;
     if (scale === Infinity)
         scale = maxSize / 2;
-        
+
     return {
         scale: scale * scaler,
         offset: new Offset(halfWidth, halfHeight)
@@ -80,6 +80,15 @@ function DrawUpdate(scale: number, offset: Offset) {
     //DrawCross();
     for (var i = 0; i < table.elements.length; i++)
         table.GetElement(i).value.Draw(ctx, scale, offset);
+
+    for (var i = 0; i < table.elements.length; i++)
+        for (var y = i; y < table.elements.length; y++) {
+            var r = table.elements[i].value.Collides(table.elements[y].value);
+            for (var x = 0; x < r.length; x++) {
+                console.log("found collision");
+                new Point(ctx, r[x]).Draw(ctx, scale, offset);
+            }
+        }
     console.log("redraw");
 }
 

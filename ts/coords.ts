@@ -20,6 +20,10 @@ class Coord {
     ScaleCoord(scale: number, offset: Offset) {
         return new ScaledCoord(this.x, -this.y, scale, offset);
     }
+    
+    Distance(c:Coord) {
+        return Math.pow(c.x - this.x, 2) + Math.pow(this.y - c.y, 2);
+    }
 
     static get zero() {
         return new Coord(0, 0);
@@ -41,6 +45,14 @@ class Coord {
     set y(val:number) {
         changed = true;
         this.cy = val;
+    }
+    
+    get sqrlenght() {
+        return this.x * this.x + this.y * this.y;
+    }
+    
+    get lenght() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 }
 

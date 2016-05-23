@@ -14,7 +14,10 @@ class Shape {
     }
 
     GenerateTableFieldsFor(row: HTMLTableRowElement) {
-
+    }
+    
+    Collides(s:Shape):Coord[] {
+        return [];
     }
 }
 

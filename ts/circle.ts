@@ -34,15 +34,54 @@ class Circle extends Shape {
         row.children[2].appendChild(inp);
     }
     
+    Collides(s:Shape):Coord[] {
+        if(s instanceof Circle)
+            return this.CollidesCircle(<Circle>s);
+        return []
+    }
+
+    CollidesCircle(c: Circle):Coord[] {
+        /*e = c - a[difference in x coordinates]
+        f = d - b[difference in y coordinates]
+        p = sqrt(e ^ 2 + f ^ 2)[distance between centers]
+        k = (p ^ 2 + r ^ 2 - s ^ 2) / (2p)         [distance from center 1 to line
+                                      joining points of intersection]
+        x = a + ek / p + (f / p)sqrt(r ^ 2 - k ^ 2)
+        y = b + fk / p - (e / p)sqrt(r ^ 2 - k ^ 2)
+        OR
+        x = a + ek / p - (f / p)sqrt(r ^ 2 - k ^ 2)
+        y = b + fk / p + (e / p)sqrt(r ^ 2 - k ^ 2)*/
+
+        var e = c.x - this.x;
+        var f = c.y - this.y;
+        var p = Math.sqrt(e * e + f + f);
+        var k = (p * p + this.radius * this.radius - c.radius * c.radius) / 2 * p;
+
+        return [new Coord(this.x + e * k / p + (f / p) * Math.sqrt(this.radius * this.radius - k * k),
+            this.y + f * k / p - (e / p) * Math.sqrt(this.radius * this.radius - k * k)),
+
+            new Coord(this.x + e * k / p - (f / p) * Math.sqrt(this.radius * this.radius - k * k),
+                this.y + f * k / p + (e / p) * Math.sqrt(this.radius * this.radius - k * k))
+        ]
+    }
+
     get radius() {
         return this._radius;
     }
-    
-    set radius(value:number) {
+
+    set radius(value: number) {
         changed = true;
         this._radius = value;
     }
-    
+
+    get x() {
+        return this.coord.x;
+    }
+
+    get y() {
+        return this.coord.y;
+    }
+
     get bounds() {
         return new Bounds(this.coord.x - this.radius, this.coord.y - this.radius, this.coord.x + this.radius, this.coord.y + this.radius);
     }
