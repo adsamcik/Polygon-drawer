@@ -16,17 +16,16 @@ class TableElement {
             var p = <Polygon>value;
             for (var i = 0; i < p.points.length; i++)
                 this.AddToTable(i, p.GetPoint(i));
-            
-            var row = this.table.t.insertRow(this.row.rowIndex + p.points.length + 1);        
+
+            var row = this.table.t.insertRow(this.row.rowIndex + p.points.length + 1);
             cell = row.insertCell(0);
             cell.colSpan = 4;
             cell.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--primary' style='margin: 0 auto;display:block;'>Add coord</button>";
             var _this = this;
-            cell.children[0].addEventListener('click', event => {_this.Add(Coord.zero)});
+            cell.children[0].addEventListener('click', event => { _this.Add(Coord.zero) });
         }
         else
             this.AddToTable(0, this.value.coord);
-
     }
 
     Add(item: Coord) {
@@ -51,8 +50,10 @@ class TableElement {
             else {
                 this.RemoveRow(index);
                 p.RemovePoint(index);
-                if (p.points.length == 0)
+                if (p.points.length == 0) {
+                    this.table.t.deleteRow(this.row.rowIndex + 1);
                     this.table.RemoveElementValue(this);
+                }
             }
         }
         else {
@@ -74,13 +75,13 @@ class TableElement {
 
     private AddToTable(index: number, c: Coord) {
         var row = this.table.t.insertRow(this.row.rowIndex + index + 1);
-        
+
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
         var cell4 = row.insertCell(3);
         this.value.GenerateTableFieldsFor(row);
-        
+
         cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored'><img src='icons/remove.svg' width='24px'></button>";
         var btn = <HTMLButtonElement>cell4.firstChild;
         var _this = this;
