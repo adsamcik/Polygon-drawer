@@ -39,14 +39,6 @@ input:focus {
     display: block;
 }
 
-#table {
-    position: fixed;
-    top: 3%;
-    left: 3%;
-    width: 290px;
-    max-height: 50%;
-}
-
 #canvas,
 body,
 html {
@@ -60,6 +52,15 @@ html {
 .addButton {
     position: absolute;
     right: 10px;
+}
+
+#table {
+    table-layout: fixed;
+    position: fixed;
+    top: 3%;
+    left: 3%;
+    width: 290px;
+    max-height: 50%;
 }
 
 #table th,
