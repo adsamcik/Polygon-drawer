@@ -1,7 +1,7 @@
 class Polygon extends Shape {
     points: Coord[];
 
-    constructor(ctx: CanvasRenderingContext2D, coord:Coord) {
+    constructor(ctx: CanvasRenderingContext2D, coord: Coord) {
         super(ctx, coord);
         this.points = [coord];
         this.ctx = ctx;
@@ -42,6 +42,9 @@ class Polygon extends Shape {
         }
         for (var i = 0; i < this.points.length; i++) {
             //console.log("from (" + this.points[i].x + ", " + this.points[i].y + ") to (" + this.points[i+1].x + ", " + this.points[i+1].y + ")");
+            if (this.points[i] instanceof Vector)
+                (<Vector>this.points[i]).base = i > 0 ? this.points[i - 1] : Coord.zero;
+
             pos = this.points[i].ScaleCoord(scale, offset);
             ctx.lineTo(pos.scaledX, pos.scaledY);
         }
@@ -69,21 +72,40 @@ class Polygon extends Shape {
         }
         return new Bounds(miX, miY, maX, maY);
     }
-    
+
+    private ConvertPoint() {
+
+    }
+
     GenerateTableFieldsFor(row: HTMLTableRowElement) {
-        var _this = this.GetPoint();
-        
-        row.children[0].innerHTML = "<img src='icons/" + (_this instanceof Vector ? "vector" : "point") + ".svg' width='24'>";
+        var _this = this;
+        var _coord = this.GetPoint();
+        var _index = this.points.length - 1;
+
+        row.children[0].innerHTML = "<img src='icons/" + (_this instanceof Vector ? "vector" : "point") + ".svg'>";
         row.children[0].className = 'cellCollapsed';
-        
+        row.children[0].addEventListener('click', event => {
+            changed = true;
+            if (_coord instanceof Vector) {
+                (<HTMLImageElement>event.target).src = 'icons/point.svg';
+                var dir = (<Vector>_coord).dir;
+                _coord = new Coord(dir.x, dir.y);
+            }
+            else {
+                (<HTMLImageElement>event.target).src = 'icons/vector.svg';
+                _coord = new Vector(_coord.x, _coord.y);
+            }
+            _this.points[_index] = _coord;
+        });
+
         var inp = <HTMLInputElement>document.createElement("input");
-        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target);if (IsValid(t)) _this.x = +t.value; });
-        inp.value = _this.x.toString();
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) _coord.x = +t.value; });
+        inp.value = _coord.x.toString();
         row.children[1].appendChild(inp);
-        
+
         var inp = <HTMLInputElement>document.createElement("input");
-        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target);if (IsValid(t)) _this.y = +t.value; });
-        inp.value = _this.y.toString();
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) _coord.y = +t.value; });
+        inp.value = _coord.y.toString();
         row.children[2].appendChild(inp);
     }
 }
