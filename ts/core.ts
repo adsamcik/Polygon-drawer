@@ -25,6 +25,7 @@ var center: Offset = new Offset(0, 0);
 //Constant value to handle negative values (screen is 1/2 as high because upper half are positive and lower half are negative numbers)
 //that's 0.5 and the -0.02 from that is to keep it from edges a bit
 var scaler = 0.48;
+var prevScale = 0;
 
 //width or height of the canvas, which one is bigger
 var maxSize: number;
@@ -61,9 +62,11 @@ function RecountUpdate() {
     maxDist = ReturnAbsBigger(maxDist, bounds.maY);
     maxDist = ReturnAbsBigger(maxDist, bounds.miX);
     maxDist = ReturnAbsBigger(maxDist, bounds.miY);
+    
     var scale = maxSize / maxDist;
     if (scale === Infinity)
         scale = maxSize / 2;
+        
     return {
         scale: scale * scaler,
         offset: new Offset(halfWidth, halfHeight)

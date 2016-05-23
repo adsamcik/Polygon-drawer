@@ -9,7 +9,7 @@ class Circle extends Shape {
     Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
         ctx.beginPath();
         var scaled = this.coord.ScaleCoord(scale, offset);
-        ctx.arc(scaled.scaledX, scaled.scaledY, this.radius, 0, 2 * Math.PI, false);
+        ctx.arc(scaled.scaledX, scaled.scaledY, this.radius * scale, 0, 2 * Math.PI, false);
         ctx.lineWidth = 5;
         ctx.strokeStyle = '#003300';
         ctx.stroke();
@@ -41,5 +41,9 @@ class Circle extends Shape {
     set radius(value:number) {
         changed = true;
         this._radius = value;
+    }
+    
+    get bounds() {
+        return new Bounds(this.coord.x - this.radius, this.coord.y - this.radius, this.coord.x + this.radius, this.coord.y + this.radius);
     }
 }
