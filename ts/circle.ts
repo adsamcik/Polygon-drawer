@@ -37,6 +37,8 @@ class Circle extends Shape {
     Collides(s: Shape): Coord[] {
         if (s instanceof Circle)
             return this.CollidesCircle(<Circle>s);
+        else if (s instanceof Polygon)
+            return this.CollidesPolygon(<Polygon>s);
         return []
     }
 
@@ -62,6 +64,72 @@ class Circle extends Shape {
             new Coord(this.x + e * k / p - (f / p) * Math.sqrt(this.radius * this.radius - k * k), this.y + f * k / p + (e / p) * Math.sqrt(this.radius * this.radius - k * k))
         ]
     }
+    
+    IsOnSegment(a: Coord, b: Coord, c: Coord): boolean {
+        // Compute the dot product of vectors
+        var ab = a.Minus(b);
+        var ac = a.Minus(c);
+        var KAC = ab.Dot(ac);
+        if (KAC < 0) return false;
+        if (KAC == 0) return false;
+
+        // Compute the square of the segment lenght
+        var KAB= ab.Dot(ab);
+        if (KAC > KAB) return false;
+        if (KAC == KAB) return false;
+        return true;
+    }
+
+    CollidesPolygon(p: Polygon): Coord[] {
+        var result: Coord[] = [];
+        for (var i = 1; i < p.points.length; i++)
+            result = result.concat(this.CollidesLine(p.points[i - 1], p.points[i]));
+        return result;
+    }
+
+    CollidesLine(pointA: Coord, pointB: Coord): Coord[] {
+        var baX = pointB.x - pointA.x;
+        var baY = pointB.y - pointA.y;
+        var caX = this.center.x - pointA.x;
+        var caY = this.center.y - pointA.y;
+
+        var a = baX * baX + baY * baY;
+        var bBy2 = baX * caX + baY * caY;
+        var c = caX * caX + caY * caY - this.radius * this.radius;
+
+        var pBy2 = bBy2 / a;
+        var q = c / a;
+
+        var disc = pBy2 * pBy2 - q;
+        if (disc < 0)
+            return [];
+        // if disc == 0 ... dealt with later
+        var tmpSqrt = Math.sqrt(disc);
+        var abScalingFactor1 = -pBy2 + tmpSqrt;
+        var abScalingFactor2 = -pBy2 - tmpSqrt;
+
+        var p1 = new Coord(pointA.x - baX * abScalingFactor1, pointA.y - baY * abScalingFactor1);
+        var onLine1 = this.IsOnSegment(pointA, pointB, p1);
+        if (disc == 0) { // abScalingFactor1 == abScalingFactor2
+            if (onLine1)
+                return [p1];
+            else
+                return [];
+        }
+        var p2 = new Coord(pointA.x - baX * abScalingFactor2, pointA.y - baY * abScalingFactor2);
+        var onLine2 = this.IsOnSegment(pointA, pointB, p2);
+        if (onLine1) {
+            if (onLine2)
+                return [p1, p2];
+            else
+                return [p1];
+        }
+        else if (onLine2)
+            return [p2];
+        else
+            return [];
+
+    }
 
     get radius() {
         return this._radius;
@@ -78,6 +146,10 @@ class Circle extends Shape {
 
     get y() {
         return this.coord.y;
+    }
+
+    get center() {
+        return this.coord;
     }
 
     get bounds() {

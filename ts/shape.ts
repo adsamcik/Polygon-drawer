@@ -29,7 +29,7 @@ class Point extends Shape {
     Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
         ctx.beginPath();
         var scaled = this.coord.ScaleCoord(scale, offset);
-        ctx.arc(scaled.scaledX, scaled.scaledY, maxSize / 100, 0, 2 * Math.PI, false);
+        ctx.arc(scaled.scaledX, scaled.scaledY, (maxSize/scale) / 100, 0, 2 * Math.PI, false);
         ctx.fillStyle = '#003300';
         ctx.stroke();
         ctx.fill();

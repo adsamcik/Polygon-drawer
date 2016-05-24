@@ -82,14 +82,13 @@ function DrawUpdate(scale: number, offset: Offset) {
         table.GetElement(i).value.Draw(ctx, scale, offset);
 
     for (var i = 0; i < table.elements.length; i++)
-        for (var y = i; y < table.elements.length; y++) {
+        for (var y = i + 1; y < table.elements.length; y++) {
             var r = table.elements[i].value.Collides(table.elements[y].value);
-            for (var x = 0; x < r.length; x++) {
-                console.log("found collision");
+            console.log(r.length);
+            for (var x = 0; x < r.length; x++)
                 new Point(ctx, r[x]).Draw(ctx, scale, offset);
-            }
         }
-    console.log("redraw");
+    //console.log("redraw");
 }
 
 /*function DrawIntersections(array) {

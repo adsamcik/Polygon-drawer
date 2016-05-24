@@ -20,37 +20,41 @@ class Coord {
     ScaleCoord(scale: number, offset: Offset) {
         return new ScaledCoord(this.x, -this.y, scale, offset);
     }
-    
-    Distance(c:Coord) {
+
+    Distance(c: Coord) {
         return Math.pow(c.x - this.x, 2) + Math.pow(this.y - c.y, 2);
+    }
+
+    Minus(c: Coord) {
+        return new Vector(this.x - c.x, this.y - c.y);
     }
 
     static get zero() {
         return new Coord(0, 0);
     }
-    
+
     get x() {
         return this.cx;
     }
-    
-    set x(val:number) {
+
+    set x(val: number) {
         changed = true;
         this.cx = val;
     }
-    
+
     get y() {
         return this.cy;
     }
-    
-    set y(val:number) {
+
+    set y(val: number) {
         changed = true;
         this.cy = val;
     }
-    
+
     get sqrlenght() {
         return this.x * this.x + this.y * this.y;
     }
-    
+
     get lenght() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
@@ -67,24 +71,29 @@ class Vector extends Coord {
         return new ScaledVector(this.x, -this.y, scale, offset);
     }
 
+    Dot(v: Vector) {
+        return this.x * v.x + this.y * v.y;
+    }
+
+
     get x() {
         return this.base.x + this.cx;
     }
-    
-    set x(val:number) {
+
+    set x(val: number) {
         changed = true;
         this.cx = val;
     }
-    
+
     get y() {
         return this.base.y + this.cy;
     }
-    
-    set y(val:number) {
+
+    set y(val: number) {
         changed = true;
         this.cy = val;
     }
-    
+
     get dir() {
         return new Coord(this.cx, this.cy);
     }
