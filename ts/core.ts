@@ -84,11 +84,20 @@ function DrawUpdate(scale: number, offset: Offset) {
     for (var i = 0; i < table.elements.length; i++)
         for (var y = i + 1; y < table.elements.length; y++) {
             var r = table.elements[i].value.Collides(table.elements[y].value);
-            console.log(r.length);
             for (var x = 0; x < r.length; x++)
-                new Point(ctx, r[x]).Draw(ctx, scale, offset);
+                DrawIntesection(ctx, r[x], scale, offset);
         }
     //console.log("redraw");
+}
+
+function DrawIntesection(ctx: CanvasRenderingContext2D, point:Coord, scale: number, offset: Offset) {
+    ctx.beginPath();
+    var scaled = point.ScaleCoord(scale, offset);
+    ctx.fillStyle = "#fff";
+    ctx.arc(scaled.scaledX, scaled.scaledY, 5, 0, 2 * Math.PI, false);
+    ctx.stroke();
+    ctx.fill();
+    //DrawRoundedRect(ctx, this.coord.ScaleCoord(scale, offset).drawCoords, 60, 30, 7, true, false);
 }
 
 /*function DrawIntersections(array) {

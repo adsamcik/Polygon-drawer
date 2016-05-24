@@ -15,8 +15,8 @@ class Shape {
 
     GenerateTableFieldsFor(row: HTMLTableRowElement) {
     }
-    
-    Collides(s:Shape):Coord[] {
+
+    Collides(s: Shape): Coord[] {
         return [];
     }
 }
@@ -29,8 +29,8 @@ class Point extends Shape {
     Draw(ctx: CanvasRenderingContext2D, scale: number, offset: Offset) {
         ctx.beginPath();
         var scaled = this.coord.ScaleCoord(scale, offset);
-        ctx.arc(scaled.scaledX, scaled.scaledY, (maxSize/scale) / 100, 0, 2 * Math.PI, false);
-        ctx.fillStyle = '#003300';
+        var size = scale > 10 ? 10 : scale;
+        ctx.arc(scaled.scaledX, scaled.scaledY, size, 0, 2 * Math.PI, false);
         ctx.stroke();
         ctx.fill();
         //DrawRoundedRect(ctx, this.coord.ScaleCoord(scale, offset).drawCoords, 60, 30, 7, true, false);
