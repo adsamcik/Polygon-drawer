@@ -10,7 +10,7 @@ class Circle extends Shape {
         ctx.beginPath();
         var scaled = this.coord.ScaleCoord(scale, offset);
         ctx.arc(scaled.scaledX, scaled.scaledY, this.radius * scale, 0, 2 * Math.PI, false);
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 3;
         ctx.strokeStyle = '#003300';
         ctx.stroke();
     }
