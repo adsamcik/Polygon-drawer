@@ -47,9 +47,10 @@ var updateInt = setInterval(Update, 20);
 
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
-    var rcnt = RecountUpdate();
-    if (changed)
+    if (changed) {
+        var rcnt = RecountUpdate();
         DrawUpdate(rcnt.scale, rcnt.offset);
+    }
     changed = false;
 };
 
@@ -91,7 +92,7 @@ function DrawUpdate(scale: number, offset: Offset) {
     //console.log("redraw");
 }
 
-function DrawIntesection(ctx: CanvasRenderingContext2D, point:Coord, scale: number, offset: Offset) {
+function DrawIntesection(ctx: CanvasRenderingContext2D, point: Coord, scale: number, offset: Offset) {
     ctx.beginPath();
     var scaled = point.ScaleCoord(scale, offset);
     ctx.fillStyle = "#fff";
