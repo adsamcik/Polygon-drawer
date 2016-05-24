@@ -20,9 +20,13 @@ class Coord {
     ScaleCoord(scale: number, offset: Offset) {
         return new ScaledCoord(this.x, -this.y, scale, offset);
     }
+    
+    SqrDistance(c: Coord) {
+        return Math.pow(c.x - this.x, 2) + Math.pow(this.y - c.y, 2);
+    }
 
     Distance(c: Coord) {
-        return Math.pow(c.x - this.x, 2) + Math.pow(this.y - c.y, 2);
+        return Math.sqrt(this.SqrDistance(c));
     }
 
     Minus(c: Coord) {
@@ -103,11 +107,15 @@ class Vector extends Coord {
 class ScaledCoord extends Coord {
     scaledX: number;
     scaledY: number;
+    scale:number;
+    offset:Offset;
 
     constructor(x: number, y: number, scale: number, offset: Offset) {
         super(x, y);
         this.scaledX = x * scale + offset.h;
         this.scaledY = y * scale + offset.v;
+        this.scale = scale;
+        this.offset = offset;
     }
 
     get drawCoords() {

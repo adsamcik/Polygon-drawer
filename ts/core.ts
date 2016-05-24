@@ -6,6 +6,7 @@
 /// <reference path="polygon.ts"/>
 /// <reference path="table.ts"/>
 /// <reference path="draw.ts"/>
+/// <reference path="mouse.ts"/>
 
 //table setup
 var table = new Table(<HTMLTableElement>document.getElementById("table"));
@@ -18,7 +19,7 @@ canvas.addEventListener('mousedown', SaveIntersection, false);
 
 //canvas vars
 var ctx = canvas.getContext("2d");
-var mouse: Coord = new Coord(0, 0);
+var mouse: Mouse = new Mouse(0, 0);
 
 //center of the screen
 var center: Offset = new Offset(0, 0);
@@ -28,11 +29,13 @@ var center: Offset = new Offset(0, 0);
 var scaler = 0.48;
 var prevScale = 0;
 
+//CACHED VALUES
 //width or height of the canvas, which one is bigger
 var maxSize: number;
 //should save a nano second here and there
 var halfWidth: number, halfHeight: number;
 var changed = true;
+var intersections: ScaledCoord[] = [];
 
 //settings
 var horizontalIntersect = true;
@@ -47,10 +50,17 @@ var updateInt = setInterval(Update, 20);
 
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
+    var rcnt = RecountUpdate();
+    mouse.CheckNearby(intersections);
+
     if (changed) {
-        var rcnt = RecountUpdate();
+        RecountIntersections(rcnt.scale, rcnt.offset);
         DrawUpdate(rcnt.scale, rcnt.offset);
     }
+
+    if (mouse.inRange.length > 0)
+        DrawCoords(ctx, mouse.inRange[0]);
+
     changed = false;
 };
 
@@ -83,20 +93,27 @@ function DrawUpdate(scale: number, offset: Offset) {
     for (var i = 0; i < table.elements.length; i++)
         table.GetElement(i).value.Draw(ctx, scale, offset);
 
+
+    for (var x = 0; x < intersections.length; x++)
+        DrawIntesection(ctx, intersections[x], scale, offset);
+    //console.log("redraw");
+}
+
+function RecountIntersections(scale: number, offset: Offset) {
+    intersections.length = 0;
     for (var i = 0; i < table.elements.length; i++)
         for (var y = i + 1; y < table.elements.length; y++) {
             var r = table.elements[i].value.Collides(table.elements[y].value);
             for (var x = 0; x < r.length; x++)
-                DrawIntesection(ctx, r[x], scale, offset);
+                intersections.push(r[x].ScaleCoord(scale, offset));
         }
-    //console.log("redraw");
 }
 
-function DrawIntesection(ctx: CanvasRenderingContext2D, point: Coord, scale: number, offset: Offset) {
+function DrawIntesection(ctx: CanvasRenderingContext2D, point: ScaledCoord, scale: number, offset: Offset) {
     ctx.beginPath();
-    var scaled = point.ScaleCoord(scale, offset);
+    //var scaled = point.ScaleCoord(scale, offset);
     ctx.fillStyle = "#fff";
-    ctx.arc(scaled.scaledX, scaled.scaledY, 5, 0, 2 * Math.PI, false);
+    ctx.arc(point.scaledX, point.scaledY, 5, 0, 2 * Math.PI, false);
     ctx.stroke();
     ctx.fill();
     //DrawRoundedRect(ctx, this.coord.ScaleCoord(scale, offset).drawCoords, 60, 30, 7, true, false);
@@ -105,20 +122,11 @@ function DrawIntesection(ctx: CanvasRenderingContext2D, point: Coord, scale: num
 /*function DrawIntersections(array) {
     for (var i = 0; i < savedILines.length; i++)
         DrawIntersection(savedILines[i], array, true);
-
+ 
     if (enableMouseLine)
         DrawIntersection(GetMouseLine(), array, false);
 }*/
 
-
-//OFTEN CALLED SUPPORT FUNCTIONS
-function ScaleToOriginal(scale: number, pos: Coord, offset: Offset) {
-    var halfScale = scale * scaler;
-    return {
-        x: ((pos.x - offset.h) / halfScale),
-        y: -((pos.y - offset.v) / halfScale)
-    };
-}
 
 function ReturnAbsBigger(currentVal, newVal) {
     var absCur = Math.abs(currentVal);
