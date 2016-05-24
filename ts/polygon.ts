@@ -73,10 +73,6 @@ class Polygon extends Shape {
         return new Bounds(miX, miY, maX, maY);
     }
 
-    private ConvertPoint() {
-
-    }
-
     GenerateTableFieldsFor(row: HTMLTableRowElement) {
         var _this = this;
         var _coord = this.GetPoint();
@@ -107,5 +103,13 @@ class Polygon extends Shape {
         inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) _coord.y = +t.value; });
         inp.value = _coord.y.toString();
         row.children[2].appendChild(inp);
+    }
+
+    Collides(s: Shape): Coord[] {
+        if (s instanceof Circle)
+            return Intersection.CirclePolygon(<Circle>s, this);
+        else if (s instanceof Polygon)
+            return Intersection.PolygonPolygon(this, <Polygon>s);
+        return []
     }
 }
