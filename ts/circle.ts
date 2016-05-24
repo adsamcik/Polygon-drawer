@@ -33,14 +33,14 @@ class Circle extends Shape {
         inp.value = this.coord.y.toString();
         row.children[2].appendChild(inp);
     }
-    
-    Collides(s:Shape):Coord[] {
-        if(s instanceof Circle)
+
+    Collides(s: Shape): Coord[] {
+        if (s instanceof Circle)
             return this.CollidesCircle(<Circle>s);
         return []
     }
 
-    CollidesCircle(c: Circle):Coord[] {
+    CollidesCircle(c: Circle): Coord[] {
         /*e = c - a[difference in x coordinates]
         f = d - b[difference in y coordinates]
         p = sqrt(e ^ 2 + f ^ 2)[distance between centers]
@@ -54,14 +54,12 @@ class Circle extends Shape {
 
         var e = c.x - this.x;
         var f = c.y - this.y;
-        var p = Math.sqrt(e * e + f + f);
-        var k = (p * p + this.radius * this.radius - c.radius * c.radius) / 2 * p;
+        var p = Math.sqrt(e * e + f * f);
+        var k = (p * p + this.radius * this.radius - c.radius * c.radius) / (2 * p);
 
-        return [new Coord(this.x + e * k / p + (f / p) * Math.sqrt(this.radius * this.radius - k * k),
-            this.y + f * k / p - (e / p) * Math.sqrt(this.radius * this.radius - k * k)),
-
-            new Coord(this.x + e * k / p - (f / p) * Math.sqrt(this.radius * this.radius - k * k),
-                this.y + f * k / p + (e / p) * Math.sqrt(this.radius * this.radius - k * k))
+        return [
+            new Coord(this.x + e * k / p + (f / p) * Math.sqrt(this.radius * this.radius - k * k), this.y + f * k / p - (e / p) * Math.sqrt(this.radius * this.radius - k * k)),
+            new Coord(this.x + e * k / p - (f / p) * Math.sqrt(this.radius * this.radius - k * k), this.y + f * k / p + (e / p) * Math.sqrt(this.radius * this.radius - k * k))
         ]
     }
 
