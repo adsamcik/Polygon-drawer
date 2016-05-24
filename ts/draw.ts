@@ -9,6 +9,7 @@ function DrawCoords(ctx:CanvasRenderingContext2D, coord:ScaledCoord) {
 
     ctx.textAlign = 'left';
     ctx.fillText("x: " + coord.x, coord.scaledX, coord.scaledY + 27);
+    ctx.fillText("y: " + -coord.y, coord.scaledX, coord.scaledY + 40);
 };
 
 function DrawRoundedRect(ctx: CanvasRenderingContext2D, p: Coord, width, height, radius, fill, stroke) {
