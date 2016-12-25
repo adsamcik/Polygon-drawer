@@ -1,3 +1,4 @@
+/// <reference path="shape.ts"/>
 class Polygon extends Shape {
     points: Coord[];
 

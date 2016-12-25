@@ -37,7 +37,7 @@ function DrawRoundedRect(ctx: CanvasRenderingContext2D, p: Coord, width, height,
         ctx.fill();
 };
 
-function DrawCross(o:Offset, halfMaxSize:number) {
+function DrawCross(ctx: CanvasRenderingContext2D, o:Offset, halfMaxSize:number) {
     ctx.strokeStyle = "#ccc";
     ctx.lineWidth = 1;
 

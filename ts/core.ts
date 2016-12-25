@@ -1,3 +1,4 @@
+/// <reference path="assist.ts"/>
 /// <reference path="bounds.ts"/>
 /// <reference path="coords.ts"/>
 /// <reference path="intersections.ts"/>
@@ -7,6 +8,8 @@
 /// <reference path="table.ts"/>
 /// <reference path="draw.ts"/>
 /// <reference path="mouse.ts"/>
+
+import "../bower_components/fraction.js/fraction.min.js";
 
 //table setup
 var table = new Table(<HTMLTableElement>document.getElementById("table"));
@@ -34,7 +37,6 @@ var prevScale = 0;
 var maxSize: number;
 //should save a nano second here and there
 var halfWidth: number, halfHeight: number;
-var changed = true;
 var intersections: ScaledCoord[] = [];
 
 //settings
@@ -206,26 +208,6 @@ function CheckKey(event: KeyboardEvent) {
     var key = event.keyCode || event.charCode;
     //allowed keys are 1-9, backspace, delete and -
     return (key >= 48 && key <= 57) || key == 8 || key == 46 || key == 45;
-};
-
-function IsValidInt(inputField: HTMLInputElement) {
-    if (inputField.value.trim() == "" || !parseInt(inputField.value)) {
-        inputField.className += ' invalid';
-        return false;
-    } else {
-        inputField.className = inputField.className.replace(' invalid', '');
-        return true;
-    }
-};
-
-function IsValid(inputField: HTMLInputElement) {
-    if (inputField.value.trim() == "") {
-        inputField.className += ' invalid';
-        return false;
-    } else {
-        inputField.className = inputField.className.replace(' invalid', '');
-        return true;
-    }
 };
 
 function GenerateOption(name) {
