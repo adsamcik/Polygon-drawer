@@ -1,15 +1,18 @@
 function DrawCoords(ctx:CanvasRenderingContext2D, coord:ScaledCoord) {
     ctx.globalAlpha = 0.9;
     ctx.fillStyle = '#757575';
-    DrawRoundedRect(ctx, coord.drawCoords, 60, 30, 7, true, false);
+    var xString = coord.x.toString();
+    var yString = coord.y.toString();
+    var width:number = xString.length > yString.length ? xString.length : yString.length;
+    DrawRoundedRect(ctx, coord.drawCoords, width*7+20, 30, 7, true, false);
     ctx.globalAlpha = 1;
     ctx.fillStyle = '#000';
 
     ctx.font = "500 11px Roboto";
 
     ctx.textAlign = 'left';
-    ctx.fillText("x: " + coord.x, coord.scaledX, coord.scaledY + 27);
-    ctx.fillText("y: " + -coord.y, coord.scaledX, coord.scaledY + 40);
+    ctx.fillText("x: " + coord.x, coord.scaledX+3, coord.scaledY + 12);
+    ctx.fillText("y: " + -coord.y, coord.scaledX+3, coord.scaledY + 25);
 };
 
 function DrawRoundedRect(ctx: CanvasRenderingContext2D, p: Coord, width, height, radius, fill, stroke) {
