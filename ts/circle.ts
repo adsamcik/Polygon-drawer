@@ -16,20 +16,20 @@ class Circle extends Shape {
     }
 
     GenerateTableFieldsFor(row: HTMLTableRowElement) {
-        var _this = this;
+        var __this = this;
 
         var inp = <HTMLInputElement>document.createElement("input");
-        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) _this.radius = +t.value });
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) __this.radius = +t.value });
         inp.value = this.radius.toString();
         row.children[0].appendChild(inp);
 
         var inp = <HTMLInputElement>document.createElement("input");
-        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) _this.coord.x = +t.value });
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) __this.coord.x = +t.value });
         inp.value = this.coord.x.toString();
         row.children[1].appendChild(inp);
 
         var inp = <HTMLInputElement>document.createElement("input");
-        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) _this.coord.y = +t.value });
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) __this.coord.y = +t.value });
         inp.value = this.coord.y.toString();
         row.children[2].appendChild(inp);
     }

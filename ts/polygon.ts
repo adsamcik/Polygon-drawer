@@ -74,11 +74,11 @@ class Polygon extends Shape {
     }
 
     GenerateTableFieldsFor(row: HTMLTableRowElement) {
-        var _this = this;
+        var __this = this;
         var _coord = this.GetPoint();
         var _index = this.points.length - 1;
 
-        row.children[0].innerHTML = "<img src='icons/" + (_this instanceof Vector ? "vector" : "point") + ".svg'>";
+        row.children[0].innerHTML = "<img src='icons/" + (__this instanceof Vector ? "vector" : "point") + ".svg'>";
         row.children[0].className = 'cellCollapsed';
         row.children[0].addEventListener('click', event => {
             changed = true;
@@ -91,7 +91,7 @@ class Polygon extends Shape {
                 (<HTMLImageElement>event.target).src = 'icons/vector.svg';
                 _coord = new Vector(_coord.x, _coord.y);
             }
-            _this.points[_index] = _coord;
+            __this.points[_index] = _coord;
         });
 
         var inp = <HTMLInputElement>document.createElement("input");

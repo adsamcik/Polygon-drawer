@@ -51,7 +51,7 @@ var updateInt = setInterval(Update, 20);
 //OFTEN CALLED MAIN FUNCTIONS
 function Update() {
     var rcnt = RecountUpdate();
-    mouse.CheckNearby(intersections);
+    changed = changed || mouse.CheckNearby(intersections);
 
     if (changed) {
         RecountIntersections(rcnt.scale, rcnt.offset);
@@ -118,15 +118,6 @@ function DrawIntesection(ctx: CanvasRenderingContext2D, point: ScaledCoord, scal
     ctx.fill();
     //DrawRoundedRect(ctx, this.coord.ScaleCoord(scale, offset).drawCoords, 60, 30, 7, true, false);
 }
-
-/*function DrawIntersections(array) {
-    for (var i = 0; i < savedILines.length; i++)
-        DrawIntersection(savedILines[i], array, true);
- 
-    if (enableMouseLine)
-        DrawIntersection(GetMouseLine(), array, false);
-}*/
-
 
 function ReturnAbsBigger(currentVal, newVal) {
     var absCur = Math.abs(currentVal);

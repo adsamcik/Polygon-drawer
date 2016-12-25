@@ -57,15 +57,15 @@ class Point extends Shape {
     }
 
     GenerateTableFieldsFor(row: HTMLTableRowElement) {
-        var _this = this;
+        var __this = this;
         var inp = <HTMLInputElement>document.createElement("input");
-        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) _this.x = +t.value });
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) __this.x = +t.value });
         inp.value = this.x.toString();
         row.children[1].appendChild(inp);
 
         var inp = <HTMLInputElement>document.createElement("input");
         inp.value = this.y.toString();
-        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) _this.y = +t.value; });
+        inp.addEventListener("input", event => { var t = (<HTMLInputElement>event.target); if (IsValid(t)) __this.y = +t.value; });
         row.children[2].appendChild(inp);
     }
 }
