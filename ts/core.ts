@@ -2,6 +2,7 @@
 /// <reference path="bounds.ts"/>
 /// <reference path="coords.ts"/>
 /// <reference path="intersections.ts"/>
+/// <reference path="point.ts"/>
 /// <reference path="shape.ts"/>
 /// <reference path="circle.ts"/>
 /// <reference path="polygon.ts"/>
@@ -9,12 +10,9 @@
 /// <reference path="draw.ts"/>
 /// <reference path="mouse.ts"/>
 
-import "../bower_components/fraction.js/fraction.min.js";
-
 //table setup
 var table = new Table(<HTMLTableElement>document.getElementById("table"));
 var nextIndex = 0;
-
 //canvas setup
 var canvas = document.getElementById("canvas") as HTMLCanvasElement;
 canvas.addEventListener('mousemove', SetMousePosition, false);
@@ -51,7 +49,7 @@ Rebuild();
 var updateInt = setInterval(Update, 20);
 
 //OFTEN CALLED MAIN FUNCTIONS
-function Update() {
+async function Update() {
     var rcnt = RecountUpdate();
     changed = changed || mouse.CheckNearby(intersections);
 

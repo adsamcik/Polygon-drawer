@@ -19,4 +19,4 @@ class Shape {
     Collides(s: Shape): Coord[] {
         return [];
     }
-}
+};

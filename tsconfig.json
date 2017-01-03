@@ -4,6 +4,10 @@
         "module": "amd",
         "removeComments": true,
         "sourceMap": true,
-        "outFile": "scripts/core.js"
-    }
+        "outFile": "scripts/core.js",
+        "allowJs": true
+    },
+    "files": [
+        "ts/core.ts"
+    ]
 }
