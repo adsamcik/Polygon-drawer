@@ -1,0 +1,23 @@
+{
+  "name": "polygons",
+  "version": "1.0.0",
+  "description": "",
+  "main": "scripts/core.js",
+  "dependencies": {
+    "material-components-web": "*"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adsamcik/Polygons.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adsamcik/Polygons/issues"
+  },
+  "homepage": "https://github.com/adsamcik/Polygons#readme"
+}
