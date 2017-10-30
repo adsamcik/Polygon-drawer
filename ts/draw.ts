@@ -11,8 +11,10 @@ function DrawCoords(ctx:CanvasRenderingContext2D, coord:ScaledCoord) {
     ctx.font = "500 11px Roboto";
 
     ctx.textAlign = 'left';
-    ctx.fillText("x: " + coord.x, coord.scaledX+3, coord.scaledY + 12);
-    ctx.fillText("y: " + -coord.y, coord.scaledX+3, coord.scaledY + 25);
+    const decimals = 5;
+    const power = Math.pow(10, 5);
+    ctx.fillText("x: " + Math.round(coord.x * power)/power, coord.scaledX+3, coord.scaledY + 12);
+    ctx.fillText("y: " + -Math.round(coord.y * power)/power, coord.scaledX+3, coord.scaledY + 25);
 };
 
 function DrawRoundedRect(ctx: CanvasRenderingContext2D, p: Coord, width, height, radius, fill, stroke) {
