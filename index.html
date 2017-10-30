@@ -4,17 +4,18 @@
 <head>
     <title>Polygon project</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="bower_components/material-design-lite/material.min.css">
+    <link rel="stylesheet" href="node_modules/material-components-web/dist/material-components-web.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
     <link rel="stylesheet" href="main.css">
     <link href="icons/icon.png" rel="icon" type="image/png">
-    <script src="bower_components/material-design-lite/material.min.js"></script>
+    
+    <script src="node_modules/material-components-web/dist/material-components-web.min.js"></script>
 </head>
 
 <body onresize="Rebuild()">
     <canvas id="canvas"></canvas>
-    <table id="table" class="mdl-shadow--2dp">
+    <table id="table" class="mdc-elevation--z4">
         <thead>
             <tr>
                 <th class="cellCollapsed" style="width:30%"></th>
@@ -28,14 +29,20 @@
         </tbody>
     </table>
     <div id='newPointWrapper'>
-        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onclick="AddPoint()">
-            <i class="material-icons">brightness_1</i>
+        <button class="mdc-fab material-icons" aria-label="brightness_1" onclick="AddPoint()">
+            <span class="mdc-fab__icon">
+                brightness_1
+            </span>
         </button>
-        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onclick="AddCircle()">
-            <i class="material-icons">panorama_fish_eye</i>
+        <button class="mdc-fab material-icons" aria-label="panorama_fish_eye" onclick="AddCircle()">
+            <span class="mdc-fab__icon">
+                panorama_fish_eye
+            </span>
         </button>
-        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onclick="AddPolygon()">
-            <i class="material-icons">filter_hdr</i>
+        <button class="mdc-fab material-icons" aria-label="filter_hdr" onclick="AddPolygon()">
+            <span class="mdc-fab__icon">
+                filter_hdr
+            </span>
         </button>
     </div>
     <script src="scripts/core.js"></script>
