@@ -8,7 +8,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "tsc /ts/core.ts --module commonjs; node ./scripts/core.js"
+    "test": "tsc"
   },
   "repository": {
     "type": "git",

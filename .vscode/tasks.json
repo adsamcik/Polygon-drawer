@@ -8,6 +8,6 @@
     "showOutput": "silent",
     "problemMatcher": "$tsc",
     "files": [
-        "scripts/core.ts"
+        "ts/core.ts"
     ]
 }
