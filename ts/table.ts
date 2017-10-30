@@ -20,7 +20,7 @@ class TableElement {
             var row = this.table.t.insertRow(this.row.rowIndex + p.points.length + 1);
             cell = row.insertCell(0);
             cell.colSpan = 4;
-            cell.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--primary' style='margin: 0 auto;display:block;'>Add coord</button>";
+            cell.innerHTML = "<button class='mdc-button' style='margin: 0 auto;display:block;'>Add coord</button>";
             var _this = this;
             cell.children[0].addEventListener('click', event => { _this.Add(Coord.zero) });
         }
@@ -82,7 +82,7 @@ class TableElement {
         var cell4 = row.insertCell(3);
         this.value.GenerateTableFieldsFor(row);
 
-        cell4.innerHTML = "<button class='mdl-button mdl-js-button mdl-button--icon mdl-button--colored'><img src='icons/remove.svg' width='24px'></button>";
+        cell4.innerHTML = "<button class='mdc-button'><img src='icons/remove.svg' width='24px'></button>";
         var btn = <HTMLButtonElement>cell4.firstChild;
         var _this = this;
         btn.addEventListener("click", function (event) { _this.Remove(_this.CalcRowIndex(event)); }, false);
